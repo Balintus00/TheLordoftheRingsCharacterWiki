@@ -1,6 +1,5 @@
 package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -90,7 +89,7 @@ fun TheLordOfTheRingsCharacterWikiTheme(content: @Composable () -> Unit) {
     ApplyPlatformSpecificThemeSettings(colorScheme)
 
     MaterialTheme(
-        colorScheme = colorScheme, typography = Typography, content = content,
+        colorScheme = colorScheme, typography = Material3Typography, content = content,
     )
 }
 

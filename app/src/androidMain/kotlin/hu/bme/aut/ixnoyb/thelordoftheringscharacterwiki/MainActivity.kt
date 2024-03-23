@@ -4,43 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.ui.theme.TheLordOfTheRingsCharacterWikiTheme
+import com.arkivanov.decompose.defaultComponentContext
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.ui.UserInterface
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.DefaultRootComponent
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val rootComponent = DefaultRootComponent(defaultComponentContext())
+
         setContent {
-            TheLordOfTheRingsCharacterWikiTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
-            }
+            UserInterface(component = rootComponent)
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TheLordOfTheRingsCharacterWikiTheme {
-        Greeting("Android")
     }
 }

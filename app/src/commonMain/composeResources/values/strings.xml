@@ -1,0 +1,38 @@
+<resources>
+    <!-- region Common -->
+    <string name="top_app_bar_navigation_icon_back_content_description">Back</string>
+    <!-- endregion -->
+    <!-- region Filter Character By Name Dialog -->
+    <string name="filter_character_by_name_dialog_title">Filter by name</string>
+    <string name="filter_character_by_name_dialog_input_label">Name</string>
+    <string name="filter_character_by_name_dialog_action_filter">Filter</string>
+    <string name="filter_character_by_name_dialog_action_cancel">Cancel</string>
+    <!-- endregion -->
+    <!-- region Character List Screen -->
+    <string name="character_list_screen_top_app_bar_title">Characters</string>
+    <string name="character_list_screen_top_app_bar_icon_content_description">Actions</string>
+    <string name="character_list_screen_action_filter_by_name">Filter by name</string>
+    <string name="character_list_screen_action_information">Information</string>
+    <!-- endregion -->
+    <!-- region -->
+    <string name="character_details_screen_top_app_bar_title">Character details</string>
+    <string name="character_details_screen_section_label_height">Height</string>
+    <string name="character_details_screen_section_label_race">Race</string>
+    <string name="character_details_screen_section_label_gender">Gender</string>
+    <string name="character_details_screen_section_label_birth">Birth</string>
+    <string name="character_details_screen_section_label_spouse">Spouse</string>
+    <string name="character_details_screen_section_label_death">Death</string>
+    <string name="character_details_screen_section_label_realm">Realm</string>
+    <string name="character_details_screen_section_label_hair">Hair</string>
+    <string name="character_details_screen_empty_character_attribute">-</string>
+    <!-- endregion -->
+    <!-- region Information Screen -->
+    <string name="information_screen_top_app_bar_title">Information</string>
+    <string name="information_screen_content_title">About “The Lord the Rings”</string>
+    <string name="information_screen_content">"The Lord of the Rings" is a high-fantasy literary masterpiece created by J.R.R. Tolkien. Set in the fictional world of Middle-earth, this epic saga transports readers to a realm filled with diverse landscapes, captivating cultures, and rich history.
+Middle-earth is a place of great beauty and peril, where majestic mountains, ancient forests, rolling plains, and vast seas form the backdrop for heroic quests and epic battles. From the tranquil Shire, home to the peace-loving Hobbits, to the towering peaks of the Misty Mountains and the fiery depths of Mount Doom, every corner of Middle-earth is imbued with a sense of wonder and adventure.
+The world is populated by a diverse array of races, including Elves, Dwarves, Men, Hobbits, Orcs, and more. Each race has its own unique characteristics, traditions, and languages, contributing to the richness and depth of Tolkien's creation.
+Central to the story is the struggle between good and evil, embodied by the Dark Lord Sauron, who seeks to conquer Middle-earth with the power of the One Ring. Against him stand a fellowship of unlikely heroes, including the humble Hobbit Frodo Baggins, the wise wizard Gandalf, the valiant Aragorn, and many others, who embark on a perilous journey to destroy the Ring and save their world from darkness.
+Tolkien's masterful storytelling, intricate world-building, and vivid imagination have captivated readers for generations, making "The Lord of the Rings" one of the most beloved and enduring works of literature.</string>
+    <!-- endregion -->
+</resources>

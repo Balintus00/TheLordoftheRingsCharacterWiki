@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -24,9 +25,13 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
                 implementation(compose.ui)
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
+                implementation(libs.decompose)
+                implementation(libs.decompose.compose.extension)
+                implementation(libs.material3.windowSizeClass)
             }
         }
     }
