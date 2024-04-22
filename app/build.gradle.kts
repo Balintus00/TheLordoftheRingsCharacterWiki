@@ -25,11 +25,16 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "TheLordOfTheRingsCharacterWiki"
+            baseName = "App"
             isStatic = true
+
+            export(libs.decompose)
+            export(libs.essenty.lifecycle)
+            export(libs.mvikotlin.logging)
+            export(libs.mvikotlin.main)
         }
     }
 
@@ -56,6 +61,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(libs.decompose)
+                api(libs.essenty.lifecycle)
+                api(libs.mvikotlin.logging)
+                api(libs.mvikotlin.main)
+
                 implementation(compose.runtime)
                 implementation(compose.material3)
                 implementation(compose.materialIconsExtended)
@@ -64,7 +74,6 @@ kotlin {
                 implementation(compose.components.uiToolingPreview)
                 implementation(libs.compose.placeholder.material3)
                 implementation(libs.coroutines.core)
-                implementation(libs.decompose)
                 implementation(libs.decompose.compose.extension)
                 implementation(libs.kermit)
                 implementation(libs.kermit.koin)
@@ -76,8 +85,6 @@ kotlin {
                 implementation(libs.material3.windowSizeClass)
                 implementation(libs.mvikotlin.core)
                 implementation(libs.mvikotlin.coroutines)
-                implementation(libs.mvikotlin.logging)
-                implementation(libs.mvikotlin.main)
             }
         }
 

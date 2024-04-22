@@ -7,7 +7,7 @@ interface InformationComponent {
     fun navigateBack()
 }
 
-class DefaultInformationComponent(
+internal class DefaultInformationComponent(
     componentContext: ComponentContext,
     private val navigateBackAction: () -> Unit,
 ) : InformationComponent, ComponentContext by componentContext {

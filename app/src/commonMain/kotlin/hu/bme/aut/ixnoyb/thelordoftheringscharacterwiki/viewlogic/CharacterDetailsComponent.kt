@@ -35,7 +35,7 @@ interface CharacterDetailsComponent {
     }
 }
 
-class DefaultCharacterDetailsComponent(
+internal class DefaultCharacterDetailsComponent(
     componentContext: ComponentContext,
     private val store: CharacterDetailsStore,
     private val navigateBackAction: () -> Unit,
@@ -56,7 +56,7 @@ class DefaultCharacterDetailsComponent(
     }
 }
 
-fun State.toViewState(store: CharacterDetailsStore): ViewState = when (this) {
+internal fun State.toViewState(store: CharacterDetailsStore): ViewState = when (this) {
     is Loading -> object : ViewState.Loading {}
 
     is Loaded -> object : ViewState.Loaded {

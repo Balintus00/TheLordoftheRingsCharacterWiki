@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CharacterListPage(
+internal data class CharacterListPage(
     @SerialName("docs") val characters: List<Character>,
     @SerialName("limit") val pageSize: Int,
     @SerialName("page") val currentPage: Int,
@@ -13,7 +13,7 @@ data class CharacterListPage(
 )
 
 @Serializable
-data class Character(
+internal data class Character(
     @SerialName("_id") val id : String,
     val birth: String,
     val death: String,

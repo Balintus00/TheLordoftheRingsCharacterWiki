@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BasicDialogWithClassicalLayout(
+internal fun BasicDialogWithClassicalLayout(
     modifier: Modifier = Modifier,
     bottomActionRow: @Composable RowScope.() -> Unit = {},
     topContentColumn: @Composable ColumnScope.() -> Unit = {},
@@ -50,7 +50,7 @@ fun BasicDialogWithClassicalLayout(
 }
 
 @Composable
-fun BasicDialogSurface(content: @Composable () -> Unit) {
+internal fun BasicDialogSurface(content: @Composable () -> Unit) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainer,
         shape = MaterialTheme.shapes.large,

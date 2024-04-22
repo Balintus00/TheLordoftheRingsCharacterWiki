@@ -8,7 +8,7 @@ import com.eygraber.compose.placeholder.placeholder
 import com.eygraber.compose.placeholder.shimmer
 
 @Composable
-fun Modifier.placeholder(isVisible: Boolean): Modifier = this.placeholder(
+internal fun Modifier.placeholder(isVisible: Boolean): Modifier = this.placeholder(
     visible = isVisible,
     color = MaterialTheme.colorScheme.outlineVariant,
     highlight = PlaceholderHighlight.shimmer(

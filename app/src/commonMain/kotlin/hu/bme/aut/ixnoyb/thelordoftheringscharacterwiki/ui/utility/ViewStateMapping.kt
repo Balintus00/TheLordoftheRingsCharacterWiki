@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-inline fun <Intent : Any, State : Any, Label : Any, ViewState : Any>
+internal inline fun <Intent : Any, State : Any, Label : Any, ViewState : Any>
         Store<Intent, State, Label>.getViewStateStateFlow(
     component: ComponentContext,
     crossinline mapper: (State) -> ViewState,

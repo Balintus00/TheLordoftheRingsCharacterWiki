@@ -7,7 +7,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageNumber
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.store.CharacterListStore.Intent
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.store.CharacterListStore.State
 
-interface CharacterListStore : Store<Intent, State, Nothing> {
+internal interface CharacterListStore : Store<Intent, State, Nothing> {
 
     sealed interface Intent {
 

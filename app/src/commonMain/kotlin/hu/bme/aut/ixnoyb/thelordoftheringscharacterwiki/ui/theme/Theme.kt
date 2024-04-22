@@ -6,7 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-val lightScheme = lightColorScheme(
+internal val lightScheme = lightColorScheme(
     primary = primaryLight,
     onPrimary = onPrimaryLight,
     primaryContainer = primaryContainerLight,
@@ -44,7 +44,7 @@ val lightScheme = lightColorScheme(
     surfaceContainerHighest = surfaceContainerHighestLight,
 )
 
-val darkScheme = darkColorScheme(
+internal val darkScheme = darkColorScheme(
     primary = primaryDark,
     onPrimary = onPrimaryDark,
     primaryContainer = primaryContainerDark,
@@ -83,7 +83,7 @@ val darkScheme = darkColorScheme(
 )
 
 @Composable
-fun TheLordOfTheRingsCharacterWikiTheme(content: @Composable () -> Unit) {
+internal fun TheLordOfTheRingsCharacterWikiTheme(content: @Composable () -> Unit) {
     val colorScheme = getColorScheme()
 
     ApplyPlatformSpecificThemeSettings(colorScheme)
@@ -94,10 +94,10 @@ fun TheLordOfTheRingsCharacterWikiTheme(content: @Composable () -> Unit) {
 }
 
 @Composable
-expect fun getColorScheme(): ColorScheme
+internal expect fun getColorScheme(): ColorScheme
 
 @Composable
-expect fun ApplyPlatformSpecificThemeSettings(colorScheme: ColorScheme)
+internal expect fun ApplyPlatformSpecificThemeSettings(colorScheme: ColorScheme)
 
 @Composable
-expect fun ApplyPlatformSpecificCompositionLocalSettings(content: @Composable () -> Unit)
+internal expect fun ApplyPlatformSpecificCompositionLocalSettings(content: @Composable () -> Unit)

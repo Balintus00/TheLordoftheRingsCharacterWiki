@@ -6,10 +6,10 @@
 
 - Android
 - JVM Desktop
+- iOS
 
 ### Planned platforms to support
 
-- iOS
 - Web (using WASM)
 
 ### Prerequisites
@@ -84,7 +84,8 @@ The repository layer contains the repository classes' implementations, and the d
 
 The datasource layer contains the implementation of the datasources.
 - To implement HTTP communication, [Ktor client](https://ktor.io/docs/client-create-new-application.html) is used.
-- To store persisted structured data [SQLDelight](https://cashapp.github.io/sqldelight) is used.
+- To store persisted structured data on Android Room, on the other platforms [SQLDelight](https://cashapp.github.io/sqldelight) is 
+used. (Note that SQLDelight could be also used on Android.)
 
 ### Dependency Injection
 

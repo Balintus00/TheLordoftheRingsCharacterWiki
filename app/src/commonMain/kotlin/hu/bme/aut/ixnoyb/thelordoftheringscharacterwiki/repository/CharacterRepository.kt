@@ -6,7 +6,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageSpecification
 import kotlinx.coroutines.flow.Flow
 
-interface CharacterRepository {
+internal interface CharacterRepository {
 
     fun getAll(nameFilter: CharacterNameFilter?): Flow<List<Character>>
 

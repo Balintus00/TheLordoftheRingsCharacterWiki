@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlin.coroutines.CoroutineContext
 
 @Composable
-actual fun <T> StateFlow<T>.collectAsStateWithLifecycle(context: CoroutineContext): State<T> =
+internal actual fun <T> StateFlow<T>.collectAsStateWithLifecycle(context: CoroutineContext): State<T> =
     collectAsState(context)

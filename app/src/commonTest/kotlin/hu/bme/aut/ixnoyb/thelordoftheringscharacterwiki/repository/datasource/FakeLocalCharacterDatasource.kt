@@ -5,7 +5,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-fun createFakeLocalCharacterDatasource(
+internal fun createFakeLocalCharacterDatasource(
     getAllAction: () -> Flow<List<Character>> = { flowOf() },
     getByIdAction: (id: Id) -> Flow<Character?> = { flowOf() },
     insertAllAction: (characters: Array<out Character>) -> Unit = {},

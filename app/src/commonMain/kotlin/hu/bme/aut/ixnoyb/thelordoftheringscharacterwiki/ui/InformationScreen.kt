@@ -31,7 +31,7 @@ import thelordoftheringscharacterwiki.app.generated.resources.top_app_bar_naviga
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
-fun InformationScreenTopAppBar(
+internal fun InformationScreenTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
     navigateBackAction: () -> Unit = {},
@@ -56,7 +56,7 @@ fun InformationScreenTopAppBar(
 
 @Composable
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
-fun InformationScreen(modifier: Modifier = Modifier) {
+internal fun InformationScreen(modifier: Modifier = Modifier) {
     val standardSpace = getStandardSpace(calculateWindowSizeClass().widthSizeClass)
 
     Column(

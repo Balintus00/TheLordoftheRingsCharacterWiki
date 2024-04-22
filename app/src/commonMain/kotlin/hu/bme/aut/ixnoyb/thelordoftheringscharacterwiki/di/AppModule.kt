@@ -17,10 +17,10 @@ import kotlinx.serialization.json.Json
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-const val NAME_PERSISTENT_CHARACTER_DATA_SOURCE = "Persistent"
-const val NAME_TRANSIENT_CHARACTER_DATA_SOURCE = "Transient"
+internal const val NAME_PERSISTENT_CHARACTER_DATA_SOURCE = "Persistent"
+internal const val NAME_TRANSIENT_CHARACTER_DATA_SOURCE = "Transient"
 
-val appModule = module {
+internal val appModule = module {
     includes(platformSpecificModule)
 
     single {

@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character as DomainCharacter
 
-class SqlDelightLocalPersistentCharacterDatasource(
+internal class SqlDelightLocalPersistentCharacterDatasource(
     private val characterQueries: CharacterQueries,
 ) : LocalCharacterDatasource {
 

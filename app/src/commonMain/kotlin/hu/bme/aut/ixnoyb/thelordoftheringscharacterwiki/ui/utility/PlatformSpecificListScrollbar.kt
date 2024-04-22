@@ -6,7 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-expect fun PlatformSpecificListScrollbar(listState: LazyListState, modifier: Modifier = Modifier)
+internal expect fun PlatformSpecificListScrollbar(
+    listState: LazyListState,
+    modifier: Modifier = Modifier,
+)
 
 @Composable
-expect fun PlatformSpecificListScrollbar(scrollState: ScrollState, modifier: Modifier = Modifier)
+internal expect fun PlatformSpecificListScrollbar(
+    scrollState: ScrollState,
+    modifier: Modifier = Modifier,
+)

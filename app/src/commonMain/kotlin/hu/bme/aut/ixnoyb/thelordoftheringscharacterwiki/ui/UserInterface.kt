@@ -9,7 +9,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.ui.theme.TheLordOfTheRin
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.RootComponent
 
 @Composable
-fun UserInterface(component: RootComponent) {
+internal fun UserInterface(component: RootComponent) {
     TheLordOfTheRingsCharacterWikiTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),

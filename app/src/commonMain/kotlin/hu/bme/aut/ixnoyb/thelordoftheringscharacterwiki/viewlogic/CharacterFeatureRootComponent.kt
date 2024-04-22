@@ -33,7 +33,7 @@ interface CharacterFeatureRootComponent {
     }
 }
 
-class DefaultCharacterFeatureRootComponent(
+internal class DefaultCharacterFeatureRootComponent(
     componentContext: ComponentContext,
     private val storeFactory: StoreFactory,
     private val navigateToInformationComponentAction: () -> Unit,

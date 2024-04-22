@@ -94,7 +94,7 @@ import thelordoftheringscharacterwiki.app.generated.resources.snackbar_action_na
     ExperimentalMaterial3Api::class, ExperimentalResourceApi::class,
     ExperimentalMaterial3WindowSizeClassApi::class
 )
-fun CharacterListTopAppBar(
+internal fun CharacterListTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
     filterAction: () -> Unit = {},
@@ -141,7 +141,7 @@ fun CharacterListTopAppBar(
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun MoreActionsDropdownMenu(
+internal fun MoreActionsDropdownMenu(
     isMenuExpanded: Boolean,
     closeMenuAction: () -> Unit = {},
     onInformationMenuItemClickedAction: () -> Unit = {},
@@ -176,7 +176,7 @@ fun MoreActionsDropdownMenu(
 
 @Composable
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-fun CharacterListScreen(
+internal fun CharacterListScreen(
     component: CharacterListComponent,
     isActionsBottomSheetDisplayed: Boolean,
     snackbarHostState: SnackbarHostState,
@@ -216,7 +216,7 @@ fun CharacterListScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CharacterListScreen(
+internal fun CharacterListScreen(
     viewState: ViewState,
     isActionsBottomSheetDisplayed: Boolean,
     isNameFilterDialogDisplayed: Boolean,
@@ -289,7 +289,7 @@ fun CharacterListScreen(
 
 @Composable
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-fun FirstPageLoading(modifier: Modifier) {
+internal fun FirstPageLoading(modifier: Modifier) {
     val standardSpace = getStandardSpace(calculateWindowSizeClass().widthSizeClass)
 
     Column(
@@ -307,7 +307,7 @@ fun FirstPageLoading(modifier: Modifier) {
 }
 
 @Composable
-fun CharacterListItem(
+internal fun CharacterListItem(
     characterListItem: CharacterListItem?,
     modifier: Modifier = Modifier,
     onClickAction: ((CharacterListItem) -> Unit)?,
@@ -343,7 +343,7 @@ fun CharacterListItem(
     ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class,
     ExperimentalResourceApi::class
 )
-fun CharacterList(
+internal fun CharacterList(
     activeNameFilter: String?,
     characters: List<CharacterListItem>,
     isLoadingNextPage: Boolean,
@@ -480,7 +480,7 @@ private fun ActiveCharacterNameFilterInputChip(
 
 @Composable
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
-fun ActionModalBottomSheetContent(
+internal fun ActionModalBottomSheetContent(
     bottomSheetState: SheetState,
     scope: CoroutineScope,
     modifier: Modifier = Modifier,
@@ -516,7 +516,7 @@ fun ActionModalBottomSheetContent(
 
 @Composable
 @OptIn(ExperimentalResourceApi::class)
-fun FilterByNameDialogContent(
+internal fun FilterByNameDialogContent(
     initialNameFilter: String?,
     filterMaximumLength: Int,
     cancelAction: () -> Unit = {},
@@ -572,7 +572,7 @@ fun FilterByNameDialogContent(
 }
 
 @Composable
-fun BottomSheetActionItem(
+internal fun BottomSheetActionItem(
     iconImage: ImageVector,
     text: String,
     modifier: Modifier = Modifier,
@@ -614,7 +614,7 @@ private fun hideBottomSheetAction(
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun CharacterListErrorSnackbar(
+internal fun CharacterListErrorSnackbar(
     snackbarHostState: SnackbarHostState,
     retryAction: () -> Unit = {},
 ) {

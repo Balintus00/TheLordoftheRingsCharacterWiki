@@ -5,13 +5,13 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 
 @Composable
-actual fun getColorScheme(): ColorScheme = if (isSystemInDarkTheme()) {
+internal actual fun getColorScheme(): ColorScheme = if (isSystemInDarkTheme()) {
     darkScheme
 } else {
     lightScheme
 }
 
 @Composable
-actual fun ApplyPlatformSpecificThemeSettings(colorScheme: ColorScheme) {
+internal actual fun ApplyPlatformSpecificThemeSettings(colorScheme: ColorScheme) {
     // No-op
 }

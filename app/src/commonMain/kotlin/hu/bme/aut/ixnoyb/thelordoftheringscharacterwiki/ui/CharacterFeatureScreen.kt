@@ -14,7 +14,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.CharacterFeatu
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun CharacterFeatureTopAppBar(
+internal fun CharacterFeatureTopAppBar(
     component: CharacterFeatureRootComponent,
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
@@ -64,7 +64,7 @@ fun CharacterFeatureTopAppBar(
 }
 
 @Composable
-fun CharacterFeatureScreen(
+internal fun CharacterFeatureScreen(
     component: CharacterFeatureRootComponent,
     isBottomSheetDisplayed: Boolean,
     isDialogDisplayed: Boolean,

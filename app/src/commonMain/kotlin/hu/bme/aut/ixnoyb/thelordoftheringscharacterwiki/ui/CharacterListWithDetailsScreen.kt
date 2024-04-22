@@ -29,7 +29,7 @@ import thelordoftheringscharacterwiki.app.generated.resources.character_list_wit
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun CharacterListWithDetailsScreen(
+internal fun CharacterListWithDetailsScreen(
     component: CharacterListDetailComponent,
     isActionsBottomSheetDisplayed: Boolean,
     isNameFilterDialogDisplayed: Boolean,
@@ -110,7 +110,7 @@ fun CharacterListWithDetailsScreen(
 
 @Composable
 @OptIn(ExperimentalResourceApi::class)
-fun NoCharacterSelectedScreen(modifier: Modifier = Modifier) {
+internal fun NoCharacterSelectedScreen(modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = modifier,

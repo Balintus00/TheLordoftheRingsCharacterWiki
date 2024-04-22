@@ -7,7 +7,7 @@ data class CharacterListItem(
     val name: String
 )
 
-fun DomainCharacter.toListItem(): CharacterListItem = CharacterListItem(
+internal fun DomainCharacter.toListItem(): CharacterListItem = CharacterListItem(
     id = id.value,
     name = name.value,
 )

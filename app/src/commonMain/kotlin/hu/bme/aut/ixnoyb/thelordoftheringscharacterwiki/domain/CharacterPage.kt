@@ -1,6 +1,6 @@
 package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain
 
-data class CharacterPage(
+internal data class CharacterPage(
     val characters: List<Character>,
     val isNextPageExist: Boolean,
 )

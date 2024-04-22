@@ -26,7 +26,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.RootComponent
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
-fun RootScaffold(component: RootComponent, modifier: Modifier = Modifier) {
+internal fun RootScaffold(component: RootComponent, modifier: Modifier = Modifier) {
     val rootChild = component.childStack.collectAsState()
 
     val currentWindowWidthSizeClass = calculateWindowSizeClass().widthSizeClass

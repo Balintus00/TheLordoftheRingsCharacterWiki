@@ -2,7 +2,7 @@ package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain
 
 import kotlin.jvm.JvmInline
 
-data class Character(
+internal data class Character(
     val id: Id,
     val birth: Birth,
     val death: Death,
@@ -16,31 +16,31 @@ data class Character(
 )
 
 @JvmInline
-value class Id(val value: String)
+internal value class Id(val value: String)
 
 @JvmInline
-value class Height(val value: String)
+internal value class Height(val value: String)
 
 @JvmInline
-value class Race(val value: String)
+internal value class Race(val value: String)
 
 @JvmInline
-value class Gender(val value: String)
+internal value class Gender(val value: String)
 
 @JvmInline
-value class Birth(val value: String)
+internal value class Birth(val value: String)
 
 @JvmInline
-value class Spouse(val value: String)
+internal value class Spouse(val value: String)
 
 @JvmInline
-value class Death(val value: String)
+internal value class Death(val value: String)
 
 @JvmInline
-value class Realm(val value: String)
+internal value class Realm(val value: String)
 
 @JvmInline
-value class Hair(val value: String)
+internal value class Hair(val value: String)
 
 @JvmInline
-value class Name(val value: String)
+internal value class Name(val value: String)

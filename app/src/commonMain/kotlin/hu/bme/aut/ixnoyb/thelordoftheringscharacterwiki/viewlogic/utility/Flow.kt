@@ -17,13 +17,13 @@ import kotlinx.coroutines.flow.channelFlow
 
 // Source: https://github.com/arkivanov/Decompose/issues/516#issuecomment-1791022312
 @Suppress("unused")
-fun <T : Any> Value<T>.asFlow(): Flow<T> = channelFlow {
+internal fun <T : Any> Value<T>.asFlow(): Flow<T> = channelFlow {
     val cancellation = subscribe(channel::trySend)
     awaitClose(cancellation::cancel)
 }
 
 // Source: https://slack-chats.kotlinlang.org/t/16225841/how-can-i-convert-value-to-flow
-fun <T : Any> Value<T>.toStateFlow(): StateFlow<T> = ValueStateFlow(this)
+internal fun <T : Any> Value<T>.toStateFlow(): StateFlow<T> = ValueStateFlow(this)
 
 private class ValueStateFlow<out T : Any>(private val source: Value<T>) : StateFlow<T> {
 
@@ -46,7 +46,7 @@ private class ValueStateFlow<out T : Any>(private val source: Value<T>) : StateF
 }
 
 // Source: https://gist.github.com/aartikov/a56cc94bb306e05b7b7927353910da08
-val ComponentContext.componentScope: CoroutineScope get() {
+internal val ComponentContext.componentScope: CoroutineScope get() {
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     if (lifecycle.state != Lifecycle.State.DESTROYED) {

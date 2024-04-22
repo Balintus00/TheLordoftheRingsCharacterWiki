@@ -5,7 +5,7 @@ import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.SqlDelightDatabase
 
 private const val DATABASE_NAME = "the-lord-of-the-rings-character-wiki.db"
-actual fun getSqlDelightDriver(): SqlDriver = NativeSqliteDriver(
+internal actual fun getSqlDelightDriver(): SqlDriver = NativeSqliteDriver(
     SqlDelightDatabase.Schema,
     DATABASE_NAME,
 )

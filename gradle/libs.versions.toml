@@ -10,6 +10,7 @@ compose-multipatform = "1.6.0"
 compose-placeholder = "1.0.7"
 coroutines = "1.8.0"
 decompose = "3.0.0-alpha08"
+essenty = "2.0.0"
 gradle-plugin = "8.2.0"
 java = "17"
 kermit = "2.0.3"
@@ -35,6 +36,7 @@ coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-compose-extension = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
+essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kermit-koin = { module = "co.touchlab:kermit-koin", version.ref = "kermit" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }

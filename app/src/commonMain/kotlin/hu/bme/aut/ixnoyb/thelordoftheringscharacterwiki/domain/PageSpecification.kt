@@ -2,13 +2,13 @@ package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain
 
 import kotlin.jvm.JvmInline
 
-data class PageSpecification(
+internal data class PageSpecification(
     val number: PageNumber,
     val size: PageSize,
 )
 
 @JvmInline
-value class PageNumber(val value: Int) {
+internal value class PageNumber(val value: Int) {
 
     init {
         require(value > 0)
@@ -25,7 +25,7 @@ value class PageNumber(val value: Int) {
 }
 
 @JvmInline
-value class PageSize(val value: Int) {
+internal value class PageSize(val value: Int) {
 
     init {
         require(value > 0)

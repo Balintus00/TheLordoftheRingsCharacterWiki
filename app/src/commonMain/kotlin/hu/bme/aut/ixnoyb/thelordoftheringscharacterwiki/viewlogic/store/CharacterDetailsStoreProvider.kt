@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class CharacterDetailsStoreProvider(
+internal class CharacterDetailsStoreProvider(
     private val storeFactory: StoreFactory,
     private val characterId: Id,
 ) : KoinComponent {

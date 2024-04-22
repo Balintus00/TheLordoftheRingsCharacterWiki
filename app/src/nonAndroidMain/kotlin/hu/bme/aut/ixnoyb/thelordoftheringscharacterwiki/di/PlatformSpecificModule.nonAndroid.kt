@@ -7,7 +7,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.Lo
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-actual val platformSpecificModule = module {
+internal actual val platformSpecificModule = module {
 
     single {
         SqlDelightDatabase(getSqlDelightDriver())
@@ -23,4 +23,4 @@ actual val platformSpecificModule = module {
     }
 }
 
-expect fun getSqlDelightDriver(): SqlDriver
+internal expect fun getSqlDelightDriver(): SqlDriver

@@ -33,7 +33,7 @@ interface CharacterListDetailComponent {
     }
 }
 
-class DefaultCharacterListDetailComponent(
+internal class DefaultCharacterListDetailComponent(
     componentContext: ComponentContext,
     private val characterListStore: CharacterListStore,
     private val clearCharacterDetailsStoreAction: () -> Unit,

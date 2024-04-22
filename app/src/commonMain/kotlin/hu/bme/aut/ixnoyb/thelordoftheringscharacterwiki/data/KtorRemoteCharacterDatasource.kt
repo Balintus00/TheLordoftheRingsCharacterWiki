@@ -28,7 +28,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character as DomainCharacter
 
-class KtorRemoteCharacterDatasource(
+internal class KtorRemoteCharacterDatasource(
     private val httpClient: HttpClient,
 ) : RemoteCharacterDatasource {
 

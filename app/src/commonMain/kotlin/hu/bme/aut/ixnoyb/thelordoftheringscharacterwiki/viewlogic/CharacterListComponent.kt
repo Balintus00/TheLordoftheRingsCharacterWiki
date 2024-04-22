@@ -59,7 +59,7 @@ interface CharacterListComponent {
     }
 }
 
-class DefaultCharacterListComponent(
+internal class DefaultCharacterListComponent(
     componentContext: ComponentContext,
     val store: CharacterListStore,
     private val navigateToCharacterDetailsComponentAction: (Id) -> Unit,
@@ -94,7 +94,7 @@ class DefaultCharacterListComponent(
     }
 }
 
-fun State.toViewState(
+internal fun State.toViewState(
     store: CharacterListStore,
     onFilterTooLongAction: (String) -> Unit,
 ): ViewState {

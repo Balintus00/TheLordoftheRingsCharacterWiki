@@ -6,7 +6,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterPage
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageSpecification
 
-fun createFakeRemoteCharacterDatasource(
+internal fun createFakeRemoteCharacterDatasource(
     getByIdAction: (id: Id) -> Character = { throw NotImplementedError() },
     getPageAction: (CharacterNameFilter?, PageSpecification) -> CharacterPage = { _, _ ->
         throw NotImplementedError()

@@ -14,7 +14,7 @@ data class Character(
     val spouse: String,
 )
 
-fun DomainCharacter.toUiModel(): Character = Character(
+internal fun DomainCharacter.toUiModel(): Character = Character(
     birth = birth.value,
     death = death.value,
     gender = gender.value,

@@ -57,7 +57,7 @@ import thelordoftheringscharacterwiki.app.generated.resources.top_app_bar_naviga
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
-fun CharacterDetailsTopAppBar(
+internal fun CharacterDetailsTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
     navigateBackAction: () -> Unit = {},
@@ -81,7 +81,7 @@ fun CharacterDetailsTopAppBar(
 
 @Composable
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-fun CharacterDetailsScreen(
+internal fun CharacterDetailsScreen(
     component: CharacterDetailsComponent,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
@@ -119,7 +119,7 @@ fun CharacterDetailsScreen(
 
 @Composable
 @OptIn(ExperimentalResourceApi::class)
-fun CompactCharacterDetailsScreen(
+internal fun CompactCharacterDetailsScreen(
     character: Character?,
     modifier: Modifier = Modifier,
 ) {
@@ -196,7 +196,7 @@ fun CompactCharacterDetailsScreen(
 }
 
 @Composable
-fun CompactLabeledCharacterAttribute(
+internal fun CompactLabeledCharacterAttribute(
     label: String,
     value: String?,
     modifier: Modifier = Modifier,
@@ -230,7 +230,7 @@ private fun String?.normalizeCharacterAttribute(): String = if (isNullOrBlank())
 
 @Composable
 @OptIn(ExperimentalResourceApi::class)
-fun MediumCharacterDetailsScreen(
+internal fun MediumCharacterDetailsScreen(
     character: Character?,
     modifier: Modifier = Modifier,
 ) {
@@ -313,7 +313,7 @@ fun MediumCharacterDetailsScreen(
 }
 
 @Composable
-fun MediumDoubleLabeledCharacterAttribute(
+internal fun MediumDoubleLabeledCharacterAttribute(
     leftLabel: String,
     leftValue: String?,
     rightLabel: String,
@@ -363,7 +363,7 @@ fun MediumDoubleLabeledCharacterAttribute(
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun CharacterLoadingErrorSnackbar(
+internal fun CharacterLoadingErrorSnackbar(
     snackbarHostState: SnackbarHostState,
     retryAction: () -> Unit = {},
 ) {

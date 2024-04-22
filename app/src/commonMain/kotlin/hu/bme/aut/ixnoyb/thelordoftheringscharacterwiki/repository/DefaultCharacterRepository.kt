@@ -10,7 +10,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.Re
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
-class DefaultCharacterRepository(
+internal class DefaultCharacterRepository(
     private val localPersistentCharacterDatasource: LocalCharacterDatasource,
     private val localTransientCharacterDatasource: LocalCharacterDatasource,
     private val remoteCharacterDatasource: RemoteCharacterDatasource,
