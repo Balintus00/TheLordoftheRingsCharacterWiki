@@ -1,0 +1,28 @@
+CREATE TABLE character (
+    id TEXT PRIMARY KEY NOT NULL,
+    birth TEXT NOT NULL,
+    death TEXT NOT NULL,
+    gender TEXT NOT NULL,
+    hair TEXT NOT NULL,
+    height TEXT NOT NULL,
+    name TEXT NOT NULL,
+    race TEXT NOT NULL,
+    realm TEXT NOT NULL,
+    spouse TEXT NOT NULL
+);
+
+selectAll:
+SELECT *
+FROM character;
+
+selectById:
+SELECT *
+FROM character
+WHERE id = ?;
+
+insertCharacter:
+INSERT OR REPLACE INTO character(id, birth, death, gender, hair, height, name, race, realm, spouse)
+VALUES ?;
+
+clear:
+DELETE FROM character;

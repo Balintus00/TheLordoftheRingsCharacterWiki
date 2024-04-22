@@ -1,5 +1,6 @@
 <resources>
     <!-- region Common -->
+    <string name="snackbar_action_name_retry">Retry</string>
     <string name="top_app_bar_navigation_icon_back_content_description">Back</string>
     <!-- endregion -->
     <!-- region Filter Character By Name Dialog -->
@@ -13,8 +14,11 @@
     <string name="character_list_screen_top_app_bar_icon_content_description">Actions</string>
     <string name="character_list_screen_action_filter_by_name">Filter by name</string>
     <string name="character_list_screen_action_information">Information</string>
+    <string name="character_list_screen_empty_result_text">No result found</string>
+    <string name="character_list_screen_remove_filter_content_description">Remove filter</string>
+    <string name="character_list_screen_character_list_loading_failure_message">Failed to load characters</string>
     <!-- endregion -->
-    <!-- region -->
+    <!-- region Character Details Screen -->
     <string name="character_details_screen_top_app_bar_title">Character details</string>
     <string name="character_details_screen_section_label_height">Height</string>
     <string name="character_details_screen_section_label_race">Race</string>
@@ -24,7 +28,11 @@
     <string name="character_details_screen_section_label_death">Death</string>
     <string name="character_details_screen_section_label_realm">Realm</string>
     <string name="character_details_screen_section_label_hair">Hair</string>
-    <string name="character_details_screen_empty_character_attribute">-</string>
+    <string name="character_details_screen_empty_character_attribute">Unknown</string>
+    <string name="character_details_screen_character_loading_failure_message">Failed to load character</string>
+    <!-- endregion -->
+    <!-- region Character List With Details Screen -->
+    <string name="character_list_with_details_screen_no_character_selected">After you select a character, its details will appear here!</string>
     <!-- endregion -->
     <!-- region Information Screen -->
     <string name="information_screen_top_app_bar_title">Information</string>

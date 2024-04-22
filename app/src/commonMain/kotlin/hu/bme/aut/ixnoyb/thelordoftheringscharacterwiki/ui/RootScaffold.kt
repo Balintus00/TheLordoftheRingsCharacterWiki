@@ -5,7 +5,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,15 +25,25 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.RootComponent
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
 fun RootScaffold(component: RootComponent, modifier: Modifier = Modifier) {
     val rootChild = component.childStack.collectAsState()
 
-    var isBottomSheetDisplayed by remember { mutableStateOf(false) }
+    val currentWindowWidthSizeClass = calculateWindowSizeClass().widthSizeClass
 
+    var isBottomSheetDisplayed by remember { mutableStateOf(false) }
+    var isDialogDisplayed by remember { mutableStateOf(false) }
+    var previousWindowWidthSizeClass by remember { mutableStateOf(currentWindowWidthSizeClass) }
+    val snackbarHostState = remember { SnackbarHostState() }
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
+    if (currentWindowWidthSizeClass != previousWindowWidthSizeClass) {
+        previousWindowWidthSizeClass = currentWindowWidthSizeClass
+        isBottomSheetDisplayed = false
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             Children(
@@ -37,18 +51,13 @@ fun RootScaffold(component: RootComponent, modifier: Modifier = Modifier) {
                 animation = stackAnimation(fade())
             ) { childContainer ->
                 when (val child = childContainer.instance) {
-                    is RootComponent.Child.CharacterDetails -> {
-                        CharacterDetailsTopAppBar(
+                    is RootComponent.Child.CharacterFeature -> {
+                        CharacterFeatureTopAppBar(
+                            component = child.component,
                             modifier = Modifier.fillMaxWidth(),
-                            navigateBackAction = { child.component.navigateBack() },
-                            scrollBehavior = topAppBarScrollBehavior,
-                        )
-                    }
-
-                    is RootComponent.Child.CharacterList, is RootComponent.Child.CharacterListWithDetails -> {
-                        CharacterListTopAppBar(
-                            modifier = Modifier.fillMaxWidth(),
-                            showActionsAction = { isBottomSheetDisplayed = true },  // TODO menu
+                            showCompactListActionsAction = { isBottomSheetDisplayed = true },
+                            showNameFilterAction = { isDialogDisplayed = true },
+                            topAppBarScrollBehavior = topAppBarScrollBehavior,
                         )
                     }
 
@@ -69,25 +78,16 @@ fun RootScaffold(component: RootComponent, modifier: Modifier = Modifier) {
             animation = stackAnimation(slide())
         ) { childContainer ->
             when (val child = childContainer.instance) {
-                is RootComponent.Child.CharacterDetails -> {
-                    CharacterDetailsScreen(
-                        component = child.component,
-                    )
-                }
-
-                is RootComponent.Child.CharacterList -> {
-                    CharacterListScreen(
-                        component = child.component,
+                is RootComponent.Child.CharacterFeature -> {
+                    CharacterFeatureScreen(
                         bottomSheetClosedAction = { isBottomSheetDisplayed = false },
-                        isBottomSheetDisplayed = isBottomSheetDisplayed,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                }
-
-                is RootComponent.Child.CharacterListWithDetails -> {
-                    CharacterListWithDetailsScreen(
                         component = child.component,
+                        hideDialogAction = { isDialogDisplayed = false },
+                        isBottomSheetDisplayed = isBottomSheetDisplayed,
+                        isDialogDisplayed = isDialogDisplayed,
                         modifier = Modifier.fillMaxSize(),
+                        snackbarHostState = snackbarHostState,
+                        showDialogAction = { isDialogDisplayed = true },
                     )
                 }
 

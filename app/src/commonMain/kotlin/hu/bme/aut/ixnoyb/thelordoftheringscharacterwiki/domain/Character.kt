@@ -1,5 +1,7 @@
 package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain
 
+import kotlin.jvm.JvmInline
+
 data class Character(
     val id: Id,
     val birth: Birth,
@@ -15,6 +17,7 @@ data class Character(
 
 @JvmInline
 value class Id(val value: String)
+
 @JvmInline
 value class Height(val value: String)
 

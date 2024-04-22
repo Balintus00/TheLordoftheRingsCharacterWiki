@@ -88,15 +88,16 @@ fun TheLordOfTheRingsCharacterWikiTheme(content: @Composable () -> Unit) {
 
     ApplyPlatformSpecificThemeSettings(colorScheme)
 
-    MaterialTheme(
-        colorScheme = colorScheme, typography = Material3Typography, content = content,
-    )
+    MaterialTheme(colorScheme = colorScheme, typography = Material3Typography) {
+        ApplyPlatformSpecificCompositionLocalSettings(content = content)
+    }
 }
 
 @Composable
-@Suppress("EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE")
 expect fun getColorScheme(): ColorScheme
 
 @Composable
-@Suppress("EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE")
 expect fun ApplyPlatformSpecificThemeSettings(colorScheme: ColorScheme)
+
+@Composable
+expect fun ApplyPlatformSpecificCompositionLocalSettings(content: @Composable () -> Unit)

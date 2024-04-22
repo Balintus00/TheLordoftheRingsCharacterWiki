@@ -1,8 +1,10 @@
 package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -12,6 +14,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -19,15 +23,25 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.ui.theme.Material3Typography
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.ui.utility.PlatformSpecificListScrollbar
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.ui.utility.collectAsStateWithLifecycle
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.ui.utility.getStandardSpace
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.ui.utility.placeholder
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.CharacterDetailsComponent
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.CharacterDetailsComponent.ViewState.Loaded
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.CharacterDetailsComponent.ViewState.LoadingFailed
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.model.Character
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import thelordoftheringscharacterwiki.app.generated.resources.Res
+import thelordoftheringscharacterwiki.app.generated.resources.character_details_screen_character_loading_failure_message
 import thelordoftheringscharacterwiki.app.generated.resources.character_details_screen_empty_character_attribute
 import thelordoftheringscharacterwiki.app.generated.resources.character_details_screen_section_label_birth
 import thelordoftheringscharacterwiki.app.generated.resources.character_details_screen_section_label_death
@@ -38,6 +52,7 @@ import thelordoftheringscharacterwiki.app.generated.resources.character_details_
 import thelordoftheringscharacterwiki.app.generated.resources.character_details_screen_section_label_realm
 import thelordoftheringscharacterwiki.app.generated.resources.character_details_screen_section_label_spouse
 import thelordoftheringscharacterwiki.app.generated.resources.character_details_screen_top_app_bar_title
+import thelordoftheringscharacterwiki.app.generated.resources.snackbar_action_name_retry
 import thelordoftheringscharacterwiki.app.generated.resources.top_app_bar_navigation_icon_back_content_description
 
 @Composable
@@ -57,7 +72,6 @@ fun CharacterDetailsTopAppBar(
                         Res.string.top_app_bar_navigation_icon_back_content_description
                     )
                 )
-
             }
         },
         scrollBehavior = scrollBehavior,
@@ -69,136 +83,122 @@ fun CharacterDetailsTopAppBar(
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 fun CharacterDetailsScreen(
     component: CharacterDetailsComponent,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
+    val viewState = component.viewState.collectAsStateWithLifecycle().value
     val windowWidthSizeClass = calculateWindowSizeClass().widthSizeClass
 
-    // TODO display proper data
     when (windowWidthSizeClass) {
+        WindowWidthSizeClass.Expanded -> {
+            component.navigateToCharacterListWithDetails()
+        }
+
         WindowWidthSizeClass.Compact -> {
             CompactCharacterDetailsScreen(
-                birth = "TODO()",
-                death = "TODO()",
-                gender = "TODO()",
-                hair = "TODO()",
-                height = "TODO()",
-                name = "TODO()",
-                race = "TODO()",
-                realm = "TODO()",
-                spouse = "TODO()",
-                modifier = modifier,
+                character = (viewState as? Loaded)?.character,
+                modifier = modifier.padding(getStandardSpace(WindowWidthSizeClass.Compact)),
             )
         }
 
         WindowWidthSizeClass.Medium -> {
             MediumCharacterDetailsScreen(
-                birth = "TODO()",
-                death = "TODO()",
-                gender = "TODO()",
-                hair = "TODO()",
-                height = "TODO()",
-                name = "TODO()",
-                race = "TODO()",
-                realm = "TODO()",
-                spouse = "TODO()",
+                character = (viewState as? Loaded)?.character,
                 modifier = modifier,
             )
         }
+    }
 
-        else -> {
-            component.navigateToCharacterListWithDetails()
-        }
+    if (viewState is LoadingFailed) {
+        CharacterLoadingErrorSnackbar(
+            retryAction = viewState::retryLoading,
+            snackbarHostState = snackbarHostState,
+        )
     }
 }
 
 @Composable
 @OptIn(ExperimentalResourceApi::class)
 fun CompactCharacterDetailsScreen(
-    birth: String,
-    death: String,
-    gender: String,
-    hair: String,
-    height: String,
-    name: String,
-    race: String,
-    realm: String,
-    spouse: String,
+    character: Character?,
     modifier: Modifier = Modifier,
 ) {
-    val standardSpace = getStandardSpace(WindowWidthSizeClass.Compact)
+    Box {
+        val verticalScrollState = rememberScrollState(0)
 
-    Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(standardSpace),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            style = Material3Typography.headlineSmall,
-            text = name,
-            textAlign = TextAlign.Center,
-        )
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = modifier.verticalScroll(verticalScrollState),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            CompactLabeledCharacterAttribute(
-                label = stringResource(Res.string.character_details_screen_section_label_height)
-                    .normalizeCharacterAttribute(),
-                modifier = Modifier.fillMaxWidth(),
-                value = height,
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .placeholder(isVisible = character == null),
+                style = Material3Typography.headlineSmall,
+                text = character?.name.normalizeCharacterAttribute(),
+                textAlign = TextAlign.Center,
             )
-            CompactLabeledCharacterAttribute(
-                label = stringResource(Res.string.character_details_screen_section_label_race)
-                    .normalizeCharacterAttribute(),
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                value = race,
-            )
-            CompactLabeledCharacterAttribute(
-                label = stringResource(Res.string.character_details_screen_section_label_gender)
-                    .normalizeCharacterAttribute(),
-                modifier = Modifier.fillMaxWidth(),
-                value = gender,
-            )
-            CompactLabeledCharacterAttribute(
-                label = stringResource(Res.string.character_details_screen_section_label_birth)
-                    .normalizeCharacterAttribute(),
-                modifier = Modifier.fillMaxWidth(),
-                value = birth,
-            )
-            CompactLabeledCharacterAttribute(
-                label = stringResource(Res.string.character_details_screen_section_label_spouse)
-                    .normalizeCharacterAttribute(),
-                modifier = Modifier.fillMaxWidth(),
-                value = spouse,
-            )
-            CompactLabeledCharacterAttribute(
-                label = stringResource(Res.string.character_details_screen_section_label_death)
-                    .normalizeCharacterAttribute(),
-                modifier = Modifier.fillMaxWidth(),
-                value = death,
-            )
-            CompactLabeledCharacterAttribute(
-                label = stringResource(Res.string.character_details_screen_section_label_realm)
-                    .normalizeCharacterAttribute(),
-                modifier = Modifier.fillMaxWidth(),
-                value = realm,
-            )
-            CompactLabeledCharacterAttribute(
-                label = stringResource(Res.string.character_details_screen_section_label_hair)
-                    .normalizeCharacterAttribute(),
-                modifier = Modifier.fillMaxWidth(),
-                value = hair,
-            )
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                CompactLabeledCharacterAttribute(
+                    label = stringResource(Res.string.character_details_screen_section_label_height),
+                    modifier = Modifier.fillMaxWidth(),
+                    value = character?.height.normalizeCharacterAttribute(),
+                )
+                CompactLabeledCharacterAttribute(
+                    label = stringResource(Res.string.character_details_screen_section_label_race),
+                    modifier = Modifier.fillMaxWidth(),
+                    value = character?.race.normalizeCharacterAttribute(),
+                )
+                CompactLabeledCharacterAttribute(
+                    label = stringResource(Res.string.character_details_screen_section_label_gender)
+                        .normalizeCharacterAttribute(),
+                    modifier = Modifier.fillMaxWidth(),
+                    value = character?.gender.normalizeCharacterAttribute(),
+                )
+                CompactLabeledCharacterAttribute(
+                    label = stringResource(Res.string.character_details_screen_section_label_birth),
+                    modifier = Modifier.fillMaxWidth(),
+                    value = character?.birth.normalizeCharacterAttribute(),
+                )
+                CompactLabeledCharacterAttribute(
+                    label = stringResource(Res.string.character_details_screen_section_label_spouse),
+                    modifier = Modifier.fillMaxWidth(),
+                    value = character?.spouse.normalizeCharacterAttribute(),
+                )
+                CompactLabeledCharacterAttribute(
+                    label = stringResource(Res.string.character_details_screen_section_label_death),
+                    modifier = Modifier.fillMaxWidth(),
+                    value = character?.death.normalizeCharacterAttribute(),
+                )
+                CompactLabeledCharacterAttribute(
+                    label = stringResource(Res.string.character_details_screen_section_label_realm),
+                    modifier = Modifier.fillMaxWidth(),
+                    value = character?.realm.normalizeCharacterAttribute(),
+                )
+                CompactLabeledCharacterAttribute(
+                    label = stringResource(Res.string.character_details_screen_section_label_hair),
+                    modifier = Modifier.fillMaxWidth(),
+                    value = character?.hair.normalizeCharacterAttribute(),
+                )
+            }
         }
+
+        PlatformSpecificListScrollbar(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .fillMaxHeight(),
+            scrollState = verticalScrollState,
+        )
     }
 }
 
 @Composable
 fun CompactLabeledCharacterAttribute(
     label: String,
-    value: String,
+    value: String?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -211,89 +211,113 @@ fun CompactLabeledCharacterAttribute(
             text = label,
         )
         Text(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .placeholder(isVisible = value == null),
             style = Material3Typography.bodyMedium,
-            text = value,
+            text = value ?: "",
         )
     }
 }
 
 @Composable
 @OptIn(ExperimentalResourceApi::class)
-private fun String.normalizeCharacterAttribute(): String = ifBlank {
+private fun String?.normalizeCharacterAttribute(): String = if (isNullOrBlank()) {
     stringResource(Res.string.character_details_screen_empty_character_attribute)
+} else {
+    this
 }
 
 @Composable
 @OptIn(ExperimentalResourceApi::class)
 fun MediumCharacterDetailsScreen(
-    birth: String,
-    death: String,
-    gender: String,
-    hair: String,
-    height: String,
-    name: String,
-    race: String,
-    realm: String,
-    spouse: String,
+    character: Character?,
     modifier: Modifier = Modifier,
 ) {
+    val verticalScrollState = rememberScrollState()
     val standardSpace = getStandardSpace(WindowWidthSizeClass.Medium)
 
-    Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(standardSpace),
-        verticalArrangement = Arrangement.spacedBy(36.dp),
-    ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            style = Material3Typography.headlineSmall,
-            text = name,
-            textAlign = TextAlign.Center,
-        )
+    Box {
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
+            modifier = modifier
+                .verticalScroll(verticalScrollState)
+                .padding(standardSpace),
+            verticalArrangement = Arrangement.spacedBy(36.dp),
         ) {
-            MediumDoubleLabeledCharacterAttribute(
-                leftLabel = stringResource(Res.string.character_details_screen_section_label_height),
-                leftValue = height,
-                rightLabel = stringResource(Res.string.character_details_screen_section_label_race),
-                rightValue = race,
-                modifier = Modifier.fillMaxWidth(),
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .placeholder(isVisible = character == null),
+                style = Material3Typography.headlineSmall,
+                text = character?.name.normalizeCharacterAttribute(),
+                textAlign = TextAlign.Center,
             )
-            MediumDoubleLabeledCharacterAttribute(
-                leftLabel = stringResource(Res.string.character_details_screen_section_label_gender),
-                leftValue = gender,
-                rightLabel = stringResource(Res.string.character_details_screen_section_label_birth),
-                rightValue = birth,
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-            )
-            MediumDoubleLabeledCharacterAttribute(
-                leftLabel = stringResource(Res.string.character_details_screen_section_label_spouse),
-                leftValue = spouse,
-                rightLabel = stringResource(Res.string.character_details_screen_empty_character_attribute),
-                rightValue = death,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            MediumDoubleLabeledCharacterAttribute(
-                leftLabel = stringResource(Res.string.character_details_screen_section_label_realm),
-                leftValue = realm,
-                rightLabel = stringResource(Res.string.character_details_screen_section_label_hair),
-                rightValue = hair,
-                modifier = Modifier.fillMaxWidth(),
-            )
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                MediumDoubleLabeledCharacterAttribute(
+                    leftLabel = stringResource(
+                        Res.string.character_details_screen_section_label_height
+                    ),
+                    leftValue = character?.height,
+                    rightLabel = stringResource(
+                        Res.string.character_details_screen_section_label_race
+                    ),
+                    rightValue = character?.race,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                MediumDoubleLabeledCharacterAttribute(
+                    leftLabel = stringResource(
+                        Res.string.character_details_screen_section_label_gender
+                    ),
+                    leftValue = character?.gender,
+                    rightLabel = stringResource(
+                        Res.string.character_details_screen_section_label_birth
+                    ),
+                    rightValue = character?.birth,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                MediumDoubleLabeledCharacterAttribute(
+                    leftLabel = stringResource(
+                        Res.string.character_details_screen_section_label_spouse
+                    ),
+                    leftValue = character?.spouse,
+                    rightLabel = stringResource(
+                        Res.string.character_details_screen_empty_character_attribute
+                    ),
+                    rightValue = character?.death,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                MediumDoubleLabeledCharacterAttribute(
+                    leftLabel = stringResource(
+                        Res.string.character_details_screen_section_label_realm
+                    ),
+                    leftValue = character?.realm,
+                    rightLabel = stringResource(
+                        Res.string.character_details_screen_section_label_hair
+                    ),
+                    rightValue = character?.hair,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
+
+        PlatformSpecificListScrollbar(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .fillMaxHeight(),
+            scrollState = verticalScrollState,
+        )
     }
 }
 
 @Composable
 fun MediumDoubleLabeledCharacterAttribute(
     leftLabel: String,
-    leftValue : String,
+    leftValue: String?,
     rightLabel: String,
-    rightValue: String,
+    rightValue: String?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -305,12 +329,12 @@ fun MediumDoubleLabeledCharacterAttribute(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(0.5f),
                 style = Material3Typography.labelMedium,
                 text = leftLabel,
             )
             Text(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(0.5f),
                 style = Material3Typography.labelMedium,
                 text = rightLabel,
             )
@@ -320,15 +344,47 @@ fun MediumDoubleLabeledCharacterAttribute(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .placeholder(isVisible = leftValue == null),
                 style = Material3Typography.bodyMedium,
-                text = leftValue,
+                text = leftValue.normalizeCharacterAttribute(),
             )
             Text(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .placeholder(isVisible = rightValue == null),
                 style = Material3Typography.bodyMedium,
-                text = rightValue,
+                text = rightValue.normalizeCharacterAttribute(),
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun CharacterLoadingErrorSnackbar(
+    snackbarHostState: SnackbarHostState,
+    retryAction: () -> Unit = {},
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    val errorSnackbarAction = stringResource(
+        Res.string.snackbar_action_name_retry
+    )
+    val errorSnackbarMessage = stringResource(
+        Res.string.character_details_screen_character_loading_failure_message
+    )
+
+    coroutineScope.launch {
+        val snackbarResult = snackbarHostState.showSnackbar(
+            actionLabel = errorSnackbarAction,
+            message = errorSnackbarMessage,
+            withDismissAction = true,
+        )
+
+        if (snackbarResult == SnackbarResult.ActionPerformed) {
+            retryAction()
         }
     }
 }

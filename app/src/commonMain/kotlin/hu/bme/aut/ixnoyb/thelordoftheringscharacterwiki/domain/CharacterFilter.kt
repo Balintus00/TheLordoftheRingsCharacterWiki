@@ -1,17 +1,16 @@
 package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain
 
-data class CharacterFilter(
-    val name: NameFilter,
-)
+import kotlin.jvm.JvmInline
 
 @JvmInline
-value class NameFilter(val value: String) {
+value class CharacterNameFilter(val value: String) {
     init {
-        require(value.length in MIN_LENGTH..MAX_LENGTH)
+        require(value.isBlank().not())
+        require(value.length in MINIMUM_LENGTH..MAXIMUM_LENGTH)
     }
 
     companion object {
-        const val MIN_LENGTH = 1
-        const val MAX_LENGTH = 32
+        const val MINIMUM_LENGTH = 1
+        const val MAXIMUM_LENGTH = 32
     }
 }

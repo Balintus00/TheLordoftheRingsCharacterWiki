@@ -44,3 +44,8 @@ actual fun ApplyPlatformSpecificThemeSettings(colorScheme: ColorScheme) {
         }
     }
 }
+
+@Composable
+actual fun ApplyPlatformSpecificCompositionLocalSettings(content: @Composable () -> Unit) {
+    content()
+}
