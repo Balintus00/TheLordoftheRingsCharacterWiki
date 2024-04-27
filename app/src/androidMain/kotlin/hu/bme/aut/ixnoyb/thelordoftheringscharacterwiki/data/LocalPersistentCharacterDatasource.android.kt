@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character as DomainCharacter
 
-class RoomLocalPersistentCharacterDatasource(
+internal class RoomLocalPersistentCharacterDatasource(
     private val characterDao: CharacterDao,
 ) : LocalCharacterDatasource {
 
