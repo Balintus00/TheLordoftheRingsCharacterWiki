@@ -39,7 +39,8 @@ kotlin {
     }
 
 
-    /*    @OptIn(ExperimentalWasmDsl::class)
+    /*    TODO uncomment when web platform will be supported
+        @OptIn(ExperimentalWasmDsl::class)
         wasmJs {
             moduleName = "theLordOfTheRingsCharacterWiki"
             browser {
@@ -206,7 +207,8 @@ compose.desktop {
     }
 }
 
-/*compose.experimental {
+/* TODO uncomment when web platform will be supported
+compose.experimental {
     web.application {}
 }*/
 
@@ -217,7 +219,10 @@ buildkonfig {
         val apiKey: String = gradleLocalProperties(rootDir).getProperty("THE_ONE_API_KEY")
 
         require(apiKey.isNotEmpty()) {
-            "Register on https://the-one-api.dev/ to obtain an API key, and place it in local.properties with the following key: THE_ONE_API_KEY"
+            "Register on https://the-one-api.dev/ to obtain an API key, and place it in " +
+                    "local.properties with the following key: THE_ONE_API_KEY.\n" +
+                    "So in your local.properties file you should have a line like this:" +
+                    "THE_ONE_API_KEY=<your_api_key>"
         }
 
         buildConfigField(STRING, "THE_ONE_API_KEY", apiKey)
