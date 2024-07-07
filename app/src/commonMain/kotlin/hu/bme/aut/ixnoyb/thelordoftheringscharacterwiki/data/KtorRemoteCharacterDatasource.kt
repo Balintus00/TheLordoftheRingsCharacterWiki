@@ -54,15 +54,15 @@ internal class KtorRemoteCharacterDatasource(
 
     private fun Character.toDomainCharacter(): DomainCharacter = DomainCharacter(
         id = Id(id),
-        birth = Birth(birth),
-        death = Death(death),
-        gender = Gender(gender),
-        hair = Hair(hair),
-        height = Height(height),
-        name = Name(name),
-        race = Race(race),
-        realm = Realm(realm),
-        spouse = Spouse(spouse),
+        birth = Birth(birth ?: ""),
+        death = Death(death ?: ""),
+        gender = Gender(gender ?: ""),
+        hair = Hair(hair ?: ""),
+        height = Height(height ?: ""),
+        name = Name(name ?: ""),
+        race = Race(race ?: ""),
+        realm = Realm(realm ?: ""),
+        spouse = Spouse(spouse ?: ""),
     )
 
     override suspend fun getPage(
