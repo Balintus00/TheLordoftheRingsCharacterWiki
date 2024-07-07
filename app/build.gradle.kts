@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.buildkonfig)
     alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.sqldelight)

@@ -10,6 +10,7 @@ compose-multipatform = "1.6.0"
 compose-placeholder = "1.0.7"
 coroutines = "1.8.0"
 decompose = "3.0.0-alpha08"
+detekt = "1.23.6"
 essenty = "2.0.0"
 gradle-plugin = "8.2.0"
 java = "17"
@@ -64,6 +65,7 @@ sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", versi
 android-application = { id = "com.android.application", version.ref = "gradle-plugin" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multipatform" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
