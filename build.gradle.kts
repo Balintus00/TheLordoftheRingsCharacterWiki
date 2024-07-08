@@ -15,8 +15,9 @@ plugins {
 // https://github.com/detekt/detekt/issues/3663#issuecomment-999866611
 allprojects {
     tasks.register("detektAll") {
-        group = LifecycleBasePlugin.VERIFICATION_GROUP
         dependsOn(tasks.withType<Detekt>())
+
+        group = LifecycleBasePlugin.VERIFICATION_GROUP
     }
 
     tasks.configureEach {

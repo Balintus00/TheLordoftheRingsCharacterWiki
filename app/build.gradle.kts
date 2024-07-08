@@ -241,3 +241,13 @@ sqldelight {
         }
     }
 }
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom("$rootDir/detekt.yml")
+    parallel = true
+}
+
+dependencies {
+    detektPlugins(libs.detekt.compose)
+}
