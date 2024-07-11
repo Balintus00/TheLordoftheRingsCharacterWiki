@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.buildkonfig)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.kotest.multiplatform)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.sqldelight)
@@ -90,12 +91,6 @@ kotlin {
             }
         }
 
-        val commonTest by getting {
-            dependencies {
-                implementation(libs.kotlin.test)
-            }
-        }
-
         val nonAndroidMain by creating {
             dependsOn(commonMain)
 
@@ -135,6 +130,19 @@ kotlin {
             dependencies {
                 implementation(libs.ktor.client.darwin)
                 implementation(libs.sqldelight.native.driver)
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(libs.kotest.assertions.core)
+                implementation(libs.kotest.framework.engine)
+            }
+        }
+
+        val desktopTest by getting {
+            dependencies {
+                implementation(libs.kotest.runner.junit5)
             }
         }
     }
@@ -188,8 +196,18 @@ android {
         sourceCompatibility = JavaVersion.valueOf(javaVersionEnumName)
         targetCompatibility = JavaVersion.valueOf(javaVersionEnumName)
     }
+
     dependencies {
+        testImplementation(libs.kotest.runner.junit5)
+
         debugImplementation(libs.compose.jetpack.tooling)
+    }
+
+    @Suppress("UnstableApiUsage")
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
     }
 
     applicationVariants.all {
@@ -231,7 +249,7 @@ buildkonfig {
 }
 
 ksp {
-    arg("KOIN_CONFIG_CHECK","true")
+    arg("KOIN_CONFIG_CHECK", "true")
 }
 
 sqldelight {
@@ -250,4 +268,8 @@ detekt {
 
 dependencies {
     detektPlugins(libs.detekt.compose)
+}
+
+tasks.named<Test>("desktopTest") {
+    useJUnitPlatform()
 }

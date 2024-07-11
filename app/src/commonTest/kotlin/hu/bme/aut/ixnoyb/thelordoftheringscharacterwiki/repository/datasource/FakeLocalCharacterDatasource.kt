@@ -3,13 +3,14 @@ package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 
-internal fun createFakeLocalCharacterDatasource(
-    getAllAction: () -> Flow<List<Character>> = { flowOf() },
-    getByIdAction: (id: Id) -> Flow<Character?> = { flowOf() },
-    insertAllAction: (characters: Array<out Character>) -> Unit = {},
-    clearAction: () -> Unit = {},
+internal inline fun createFakeLocalCharacterDatasource(
+    crossinline getAllAction: () -> Flow<List<Character>> = { throw NotImplementedError() },
+    crossinline getByIdAction: (id: Id) -> Flow<Character?> = { throw NotImplementedError() },
+    crossinline insertAllAction: (characters: Array<out Character>) -> Unit = {
+        throw NotImplementedError()
+    },
+    crossinline clearAction: () -> Unit = { throw NotImplementedError() },
 ): LocalCharacterDatasource = object : LocalCharacterDatasource {
 
     override fun getAll(): Flow<List<Character>> = getAllAction()

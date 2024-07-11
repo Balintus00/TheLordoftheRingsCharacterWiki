@@ -63,6 +63,7 @@ internal class DefaultCharacterRepository(
                         it.clear()
                     }
                 }
+
                 page.number.isFirst -> {
                     destinationLocalDatasource.clear()
                 }
@@ -70,7 +71,7 @@ internal class DefaultCharacterRepository(
 
             destinationLocalDatasource.insertAll(*nextPage.characters.toTypedArray())
 
-            nextPage.run { characters to isNextPageExist  }
+            nextPage.run { characters to isNextPageExist }
         } catch (t: Throwable) {
             log.i(t) { LOG_MESSAGE_FAILED_PAGE_LOADING }
             throw t

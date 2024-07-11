@@ -111,8 +111,8 @@ this, follow the steps below:
 
 ### Unit testing
 
-Sample test cases is implemented in the commonTest source set using the official
-[Kotlin Test][kotlin-test] library.
+Sample test cases is implemented in the commonTest source set using the [Kotest][kotest] library.
+To run the test use *check* Gradle task.
 
 ## Third party dependencies
 
@@ -136,7 +136,7 @@ TODO
 
 [koin]: https://insert-koin.io/
 
-[kotlin-test]: https://kotlinlang.org/api/latest/kotlin.test/
+[kotest]: https://kotest.io/
 
 [kotlin-value-classes]: https://kotlinlang.org/docs/inline-classes.html
 
