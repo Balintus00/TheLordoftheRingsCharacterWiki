@@ -6,7 +6,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterNameFilt
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterPage
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageSpecification
 
-internal interface RemoteCharacterDatasource {
+internal interface RemoteCharacterDataSource {
 
     suspend fun getById(id: Id): Character
 

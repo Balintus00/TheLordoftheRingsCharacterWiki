@@ -66,7 +66,7 @@ internal class CharacterDetailsStoreProvider(
             characterCollectingJob?.cancel()
 
             characterCollectingJob = scope.launch {
-                repository.getById(characterId).collect {
+                repository.getByID(characterId).collect {
                     it?.let { dispatch(SuccessfulLoading(it)) } ?: dispatch(FailedLoading)
                 }
             }
@@ -81,7 +81,7 @@ internal class CharacterDetailsStoreProvider(
 
                     scope.launch {
                         try {
-                            dispatch(SuccessfulLoading(repository.loadById(characterId)))
+                            dispatch(SuccessfulLoading(repository.loadByID(characterId)))
                         } catch (t: Throwable) {
                             dispatch(FailedLoading)
                         }

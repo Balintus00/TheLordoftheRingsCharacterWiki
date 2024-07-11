@@ -4,7 +4,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
 import kotlinx.coroutines.flow.Flow
 
-internal interface LocalCharacterDatasource {
+internal interface LocalCharacterDataSource {
 
     fun getAll(): Flow<List<Character>>
 

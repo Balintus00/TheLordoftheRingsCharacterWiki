@@ -11,7 +11,7 @@ internal inline fun createFakeRemoteCharacterDatasource(
     crossinline getPageAction: (CharacterNameFilter?, PageSpecification) -> CharacterPage = { _, _ ->
         throw NotImplementedError()
     },
-): RemoteCharacterDatasource = object : RemoteCharacterDatasource {
+): RemoteCharacterDataSource = object : RemoteCharacterDataSource {
 
     override suspend fun getById(id: Id): Character = getByIdAction(id)
 

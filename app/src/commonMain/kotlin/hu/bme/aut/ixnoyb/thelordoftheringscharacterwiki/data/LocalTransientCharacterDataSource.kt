@@ -2,14 +2,14 @@ package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data
 
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDatasource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
-internal class LocalTransientCharacterDatasource : LocalCharacterDatasource {
+internal class LocalTransientCharacterDataSource : LocalCharacterDataSource {
 
     private val storedCharacters = MutableStateFlow(emptyList<Character>())
 

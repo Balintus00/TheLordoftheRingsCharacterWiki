@@ -27,6 +27,7 @@ mvikotlin = "4.0.0-alpha02"
 room = "2.6.1"
 sqldelight = "2.0.1"
 theLordOfTheRingsCharacterWiki = "1.0.0"
+turbine = "1.1.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
@@ -66,6 +67,7 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle-plugin" }

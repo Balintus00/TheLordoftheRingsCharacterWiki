@@ -1,6 +1,6 @@
 package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository
 
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character
+import app.cash.turbine.test
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterNameFilter
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterPage
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
@@ -13,9 +13,11 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.testutility.createDomain
 import io.kotest.assertions.fail
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("unused")
 class DefaultCharacterRepositoryTest : BehaviorSpec({
 
@@ -25,23 +27,27 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
             val filter: CharacterNameFilter? = null
 
             And("localPersistentDataSource returns Flow of List of Characters") {
-                val persistentCharacterListFlow = flowOf<List<Character>>()
+                val characters = listOf(createDomainCharacter())
                 val localPersistentDataSource = createFakeLocalCharacterDatasource(
-                    getAllAction = { persistentCharacterListFlow },
+                    getAllAction = { flowOf(characters) },
                 )
 
                 And("a repository") {
                     val repository = DefaultCharacterRepository(
-                        localPersistentCharacterDatasource = localPersistentDataSource,
-                        localTransientCharacterDatasource = createFakeLocalCharacterDatasource(),
-                        remoteCharacterDatasource = createFakeRemoteCharacterDatasource(),
+                        defaultDispatcher = UnconfinedTestDispatcher(),
+                        localPersistentCharacterDataSource = localPersistentDataSource,
+                        localTransientCharacterDataSource = createFakeLocalCharacterDatasource(),
+                        remoteCharacterDataSource = createFakeRemoteCharacterDatasource(),
                     )
 
                     When("getAll is called") {
                         val result = repository.getAll(filter)
 
-                        Then("result should be character List Flow from localPersistentCharacterDataSource") {
-                            result shouldBe persistentCharacterListFlow
+                        Then("result flow should contain characters returned by persistent data source") {
+                            result.test {
+                                awaitItem() shouldBe characters
+                                awaitComplete()
+                            }
                         }
                     }
                 }
@@ -52,24 +58,27 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
             val filter = CharacterNameFilter("CharacterFilter")
 
             And("localTransientDataSource returns a Flow of List of characters") {
-                val transientCharacterListFlow = flowOf<List<Character>>()
-
+                val characters = listOf(createDomainCharacter())
                 val transientDataSource = createFakeLocalCharacterDatasource(
-                    getAllAction = { transientCharacterListFlow },
+                    getAllAction = { flowOf(characters) },
                 )
 
                 And("a repository") {
                     val repository = DefaultCharacterRepository(
-                        localPersistentCharacterDatasource = createFakeLocalCharacterDatasource(),
-                        localTransientCharacterDatasource = transientDataSource,
-                        remoteCharacterDatasource = createFakeRemoteCharacterDatasource(),
+                        defaultDispatcher = UnconfinedTestDispatcher(),
+                        localPersistentCharacterDataSource = createFakeLocalCharacterDatasource(),
+                        localTransientCharacterDataSource = transientDataSource,
+                        remoteCharacterDataSource = createFakeRemoteCharacterDatasource(),
                     )
 
                     When("getAll is called") {
                         val result = repository.getAll(filter)
 
-                        Then("result should be character List Flow from localTransientCharacterDataSource") {
-                            result shouldBe transientCharacterListFlow
+                        Then("result flow should contain characters returned by transient data source") {
+                            result.test {
+                                awaitItem() shouldBe characters
+                                awaitComplete()
+                            }
                         }
                     }
                 }
@@ -107,16 +116,20 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                     And("a repository") {
                         val repository = DefaultCharacterRepository(
-                            localPersistentCharacterDatasource = persistentDataSource,
-                            localTransientCharacterDatasource = transientDataSource,
-                            remoteCharacterDatasource = createFakeRemoteCharacterDatasource(),
+                            defaultDispatcher = UnconfinedTestDispatcher(),
+                            localPersistentCharacterDataSource = persistentDataSource,
+                            localTransientCharacterDataSource = transientDataSource,
+                            remoteCharacterDataSource = createFakeRemoteCharacterDatasource(),
                         )
 
                         When("getByID is called") {
-                            val result = repository.getById(characterID)
+                            val result = repository.getByID(characterID)
 
                             Then("result should be character retrieved from transient data source") {
-                                result.first() shouldBe transientCharacter
+                                result.test {
+                                    awaitItem() shouldBe transientCharacter
+                                    awaitComplete()
+                                }
                             }
                         }
                     }
@@ -129,16 +142,20 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                     And("a repository") {
                         val repository = DefaultCharacterRepository(
-                            localPersistentCharacterDatasource = persistentDataSource,
-                            localTransientCharacterDatasource = transientDataSource,
-                            remoteCharacterDatasource = createFakeRemoteCharacterDatasource(),
+                            defaultDispatcher = UnconfinedTestDispatcher(),
+                            localPersistentCharacterDataSource = persistentDataSource,
+                            localTransientCharacterDataSource = transientDataSource,
+                            remoteCharacterDataSource = createFakeRemoteCharacterDatasource(),
                         )
 
                         When("getByID is called") {
-                            val result = repository.getById(characterID)
+                            val result = repository.getByID(characterID)
 
                             Then("result should be character retrieved from transient data source") {
-                                result.first() shouldBe transientCharacter
+                                result.test {
+                                    awaitItem() shouldBe transientCharacter
+                                    awaitComplete()
+                                }
                             }
                         }
                     }
@@ -164,16 +181,20 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                     And("a repository") {
                         val repository = DefaultCharacterRepository(
-                            localPersistentCharacterDatasource = persistentDataSource,
-                            localTransientCharacterDatasource = transientDataSource,
-                            remoteCharacterDatasource = createFakeRemoteCharacterDatasource(),
+                            defaultDispatcher = UnconfinedTestDispatcher(),
+                            localPersistentCharacterDataSource = persistentDataSource,
+                            localTransientCharacterDataSource = transientDataSource,
+                            remoteCharacterDataSource = createFakeRemoteCharacterDatasource(),
                         )
 
                         When("getByID is called") {
-                            val result = repository.getById(characterID)
+                            val result = repository.getByID(characterID)
 
                             Then("result should be character retrieved from transient data source") {
-                                result.first() shouldBe persistentCharacter
+                                result.test {
+                                    awaitItem() shouldBe persistentCharacter
+                                    awaitComplete()
+                                }
                             }
                         }
                     }
@@ -186,16 +207,20 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                     And("a repository") {
                         val repository = DefaultCharacterRepository(
-                            localPersistentCharacterDatasource = persistentDataSource,
-                            localTransientCharacterDatasource = transientDataSource,
-                            remoteCharacterDatasource = createFakeRemoteCharacterDatasource(),
+                            defaultDispatcher = UnconfinedTestDispatcher(),
+                            localPersistentCharacterDataSource = persistentDataSource,
+                            localTransientCharacterDataSource = transientDataSource,
+                            remoteCharacterDataSource = createFakeRemoteCharacterDatasource(),
                         )
 
                         When("getByID is called") {
-                            val result = repository.getById(characterID)
+                            val result = repository.getByID(characterID)
 
-                            Then("result should be null") {
-                                result.first() shouldBe null
+                            Then("result character should be null") {
+                                result.test {
+                                    awaitItem() shouldBe null
+                                    awaitComplete()
+                                }
                             }
                         }
                     }
@@ -224,13 +249,14 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                 And("a repository") {
                     val repository = DefaultCharacterRepository(
-                        localPersistentCharacterDatasource = createFakeLocalCharacterDatasource(),
-                        localTransientCharacterDatasource = createFakeLocalCharacterDatasource(),
-                        remoteCharacterDatasource = remoteDataSource,
+                        defaultDispatcher = UnconfinedTestDispatcher(),
+                        localPersistentCharacterDataSource = createFakeLocalCharacterDatasource(),
+                        localTransientCharacterDataSource = createFakeLocalCharacterDatasource(),
+                        remoteCharacterDataSource = remoteDataSource,
                     )
 
                     When("loadByID is called") {
-                        val result = repository.loadById(characterID)
+                        val result = repository.loadByID(characterID)
 
                         Then("result should be character loaded by remote data source") {
                             result shouldBe character
@@ -248,16 +274,17 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                 And("a repository") {
                     val repository = DefaultCharacterRepository(
-                        localPersistentCharacterDatasource = createFakeLocalCharacterDatasource(),
-                        localTransientCharacterDatasource = createFakeLocalCharacterDatasource(),
-                        remoteCharacterDatasource = remoteDataSource,
+                        defaultDispatcher = UnconfinedTestDispatcher(),
+                        localPersistentCharacterDataSource = createFakeLocalCharacterDatasource(),
+                        localTransientCharacterDataSource = createFakeLocalCharacterDatasource(),
+                        remoteCharacterDataSource = remoteDataSource,
                     )
 
                     When("loadByID is called") {
 
                         Then("exception thrown by remote data source should be propagated") {
                             try {
-                                repository.loadById(characterID)
+                                repository.loadByID(characterID)
 
                                 fail("No exception was thrown!")
                             } catch (t: Throwable) {
@@ -315,10 +342,11 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                                 And("a repository") {
                                     val repository = DefaultCharacterRepository(
-                                        localPersistentCharacterDatasource =
+                                        defaultDispatcher = UnconfinedTestDispatcher(),
+                                        localPersistentCharacterDataSource =
                                         createFakeLocalCharacterDatasource(),
-                                        localTransientCharacterDatasource = transientDataSource,
-                                        remoteCharacterDatasource = remoteDataSource,
+                                        localTransientCharacterDataSource = transientDataSource,
+                                        remoteCharacterDataSource = remoteDataSource,
                                     )
 
                                     When("loadPage is called") {
@@ -345,10 +373,11 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                                 And("a repository") {
                                     val repository = DefaultCharacterRepository(
-                                        localPersistentCharacterDatasource =
+                                        defaultDispatcher = UnconfinedTestDispatcher(),
+                                        localPersistentCharacterDataSource =
                                         createFakeLocalCharacterDatasource(),
-                                        localTransientCharacterDatasource = transientDataSource,
-                                        remoteCharacterDatasource = remoteDataSource,
+                                        localTransientCharacterDataSource = transientDataSource,
+                                        remoteCharacterDataSource = remoteDataSource,
                                     )
 
                                     When("loadPage is called") {
@@ -374,10 +403,11 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                             And("a repository") {
                                 val repository = DefaultCharacterRepository(
-                                    localPersistentCharacterDatasource =
+                                    defaultDispatcher = UnconfinedTestDispatcher(),
+                                    localPersistentCharacterDataSource =
                                     createFakeLocalCharacterDatasource(),
-                                    localTransientCharacterDatasource = transientDataSource,
-                                    remoteCharacterDatasource = remoteDataSource,
+                                    localTransientCharacterDataSource = transientDataSource,
+                                    remoteCharacterDataSource = remoteDataSource,
                                 )
 
                                 When("loadPage is called") {
@@ -427,10 +457,11 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                                 And("a repository") {
                                     val repository = DefaultCharacterRepository(
-                                        localPersistentCharacterDatasource =
+                                        defaultDispatcher = UnconfinedTestDispatcher(),
+                                        localPersistentCharacterDataSource =
                                         createFakeLocalCharacterDatasource(),
-                                        localTransientCharacterDatasource = transientDataSource,
-                                        remoteCharacterDatasource = remoteDataSource,
+                                        localTransientCharacterDataSource = transientDataSource,
+                                        remoteCharacterDataSource = remoteDataSource,
                                     )
 
                                     When("loadPage is called") {
@@ -458,11 +489,12 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                     And("a repository") {
                         val repository = DefaultCharacterRepository(
-                            localPersistentCharacterDatasource =
+                            defaultDispatcher = UnconfinedTestDispatcher(),
+                            localPersistentCharacterDataSource =
                             createFakeLocalCharacterDatasource(),
-                            localTransientCharacterDatasource =
+                            localTransientCharacterDataSource =
                             createFakeLocalCharacterDatasource(),
-                            remoteCharacterDatasource = remoteDataSource,
+                            remoteCharacterDataSource = remoteDataSource,
                         )
 
                         When("loadPage is called") {
@@ -521,10 +553,11 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                                 And("a repository") {
                                     val repository = DefaultCharacterRepository(
-                                        localPersistentCharacterDatasource =
+                                        defaultDispatcher = UnconfinedTestDispatcher(),
+                                        localPersistentCharacterDataSource =
                                         persistentCharacterDataSource,
-                                        localTransientCharacterDatasource = transientDataSource,
-                                        remoteCharacterDatasource = remoteDataSource,
+                                        localTransientCharacterDataSource = transientDataSource,
+                                        remoteCharacterDataSource = remoteDataSource,
                                     )
 
                                     When("loadPage is called") {
@@ -551,10 +584,11 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                                 And("a repository") {
                                     val repository = DefaultCharacterRepository(
-                                        localPersistentCharacterDatasource =
+                                        defaultDispatcher = UnconfinedTestDispatcher(),
+                                        localPersistentCharacterDataSource =
                                         persistentCharacterDataSource,
-                                        localTransientCharacterDatasource = transientDataSource,
-                                        remoteCharacterDatasource = remoteDataSource,
+                                        localTransientCharacterDataSource = transientDataSource,
+                                        remoteCharacterDataSource = remoteDataSource,
                                     )
 
                                     When("loadPage is called") {
@@ -589,11 +623,12 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                             And("a repository") {
                                 val repository = DefaultCharacterRepository(
-                                    localPersistentCharacterDatasource =
+                                    defaultDispatcher = UnconfinedTestDispatcher(),
+                                    localPersistentCharacterDataSource =
                                     persistentCharacterDataSource,
-                                    localTransientCharacterDatasource =
+                                    localTransientCharacterDataSource =
                                     createFakeLocalCharacterDatasource(),
-                                    remoteCharacterDatasource = remoteDataSource,
+                                    remoteCharacterDataSource = remoteDataSource,
                                 )
 
                                 When("loadPage is called") {
@@ -651,9 +686,10 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                         And("a repository") {
                             val repository = DefaultCharacterRepository(
-                                localPersistentCharacterDatasource = createFakeLocalCharacterDatasource(),
-                                localTransientCharacterDatasource = transientDataSource,
-                                remoteCharacterDatasource = remoteDataSource,
+                                defaultDispatcher = UnconfinedTestDispatcher(),
+                                localPersistentCharacterDataSource = createFakeLocalCharacterDatasource(),
+                                localTransientCharacterDataSource = transientDataSource,
+                                remoteCharacterDataSource = remoteDataSource,
                             )
 
                             When("loadPage is called") {
@@ -703,9 +739,10 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                         And("a repository") {
                             val repository = DefaultCharacterRepository(
-                                localPersistentCharacterDatasource = persistentDataSource,
-                                localTransientCharacterDatasource = createFakeLocalCharacterDatasource(),
-                                remoteCharacterDatasource = remoteDataSource,
+                                defaultDispatcher = UnconfinedTestDispatcher(),
+                                localPersistentCharacterDataSource = persistentDataSource,
+                                localTransientCharacterDataSource = createFakeLocalCharacterDatasource(),
+                                remoteCharacterDataSource = remoteDataSource,
                             )
 
                             When("loadPage is called") {

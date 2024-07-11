@@ -11,7 +11,7 @@ internal inline fun createFakeLocalCharacterDatasource(
         throw NotImplementedError()
     },
     crossinline clearAction: () -> Unit = { throw NotImplementedError() },
-): LocalCharacterDatasource = object : LocalCharacterDatasource {
+): LocalCharacterDataSource = object : LocalCharacterDataSource {
 
     override fun getAll(): Flow<List<Character>> = getAllAction()
 

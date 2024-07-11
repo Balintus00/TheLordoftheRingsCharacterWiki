@@ -5,51 +5,57 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterNameFilter
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageSpecification
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDatasource
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.RemoteCharacterDatasource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDataSource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.RemoteCharacterDataSource
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 
 internal class DefaultCharacterRepository(
-    private val localPersistentCharacterDatasource: LocalCharacterDatasource,
-    private val localTransientCharacterDatasource: LocalCharacterDatasource,
-    private val remoteCharacterDatasource: RemoteCharacterDatasource,
+    private val defaultDispatcher: CoroutineDispatcher,
+    private val localPersistentCharacterDataSource: LocalCharacterDataSource,
+    private val localTransientCharacterDataSource: LocalCharacterDataSource,
+    private val remoteCharacterDataSource: RemoteCharacterDataSource,
 ) : CharacterRepository {
 
     private val log = Logger.withTag(DefaultCharacterRepository::class.simpleName!!)
 
     override fun getAll(nameFilter: CharacterNameFilter?): Flow<List<Character>> =
         if (nameFilter != null) {
-            localTransientCharacterDatasource
+            localTransientCharacterDataSource
         } else {
-            localPersistentCharacterDatasource
-        }.getAll()
+            localPersistentCharacterDataSource
+        }.getAll().flowOn(defaultDispatcher)
 
-    override fun getById(id: Id): Flow<Character?> =
-        localTransientCharacterDatasource.getById(id).combine(
-            localPersistentCharacterDatasource.getById(id)
+    override fun getByID(id: Id): Flow<Character?> =
+        localTransientCharacterDataSource.getById(id).combine(
+            localPersistentCharacterDataSource.getById(id)
         ) { transientCharacter, persistentCharacter ->
             when {
                 transientCharacter != null -> transientCharacter
                 persistentCharacter != null -> persistentCharacter
                 else -> null
             }
-        }
+        }.flowOn(defaultDispatcher)
 
-    override suspend fun loadById(id: Id): Character = remoteCharacterDatasource.getById(id)
+    override suspend fun loadByID(id: Id): Character = withContext(defaultDispatcher) {
+        remoteCharacterDataSource.getById(id)
+    }
 
     override suspend fun loadPage(
         nameFilter: CharacterNameFilter?,
         page: PageSpecification,
-    ): Pair<List<Character>, Boolean> {
+    ): Pair<List<Character>, Boolean> = withContext(defaultDispatcher) {
         val destinationLocalDatasource = if (nameFilter != null) {
-            localTransientCharacterDatasource
+            localTransientCharacterDataSource
         } else {
-            localPersistentCharacterDatasource
+            localPersistentCharacterDataSource
         }
 
-        return try {
-            val nextPage = remoteCharacterDatasource.getPage(
+        try {
+            val nextPage = remoteCharacterDataSource.getPage(
                 nameFilter = nameFilter,
                 page = page,
             )
@@ -57,8 +63,8 @@ internal class DefaultCharacterRepository(
             when {
                 page.number.isFirst && nameFilter == null -> {
                     setOf(
-                        localPersistentCharacterDatasource,
-                        localTransientCharacterDatasource,
+                        localPersistentCharacterDataSource,
+                        localTransientCharacterDataSource,
                     ).forEach {
                         it.clear()
                     }

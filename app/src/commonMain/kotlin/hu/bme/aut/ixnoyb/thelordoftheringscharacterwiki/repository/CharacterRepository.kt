@@ -10,9 +10,9 @@ internal interface CharacterRepository {
 
     fun getAll(nameFilter: CharacterNameFilter?): Flow<List<Character>>
 
-    fun getById(id: Id): Flow<Character?>
+    fun getByID(id: Id): Flow<Character?>
 
-    suspend fun loadById(id: Id): Character
+    suspend fun loadByID(id: Id): Character
 
     suspend fun loadPage(
         nameFilter: CharacterNameFilter?,

@@ -16,7 +16,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageSpecification
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Race
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Realm
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Spouse
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.RemoteCharacterDatasource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.RemoteCharacterDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
@@ -28,9 +28,9 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character as DomainCharacter
 
-internal class KtorRemoteCharacterDatasource(
+internal class KtorRemoteCharacterDataSource(
     private val httpClient: HttpClient,
-) : RemoteCharacterDatasource {
+) : RemoteCharacterDataSource {
 
     override suspend fun getById(id: Id): DomainCharacter = withContext(Dispatchers.IO) {
         require(id.value.isBlank().not()) { ERROR_MESSAGE_INVALID_CHARACTER_ID }

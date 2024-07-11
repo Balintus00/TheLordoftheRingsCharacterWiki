@@ -1,18 +1,19 @@
 package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.di
 
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.KtorRemoteCharacterDatasource
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.LocalTransientCharacterDatasource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.KtorRemoteCharacterDataSource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.LocalTransientCharacterDataSource
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.getKtorEngine
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.CharacterRepository
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.DefaultCharacterRepository
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDatasource
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.RemoteCharacterDatasource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDataSource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.RemoteCharacterDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -51,23 +52,24 @@ internal val appModule = module {
         }
     }
 
-    single<RemoteCharacterDatasource> {
-        KtorRemoteCharacterDatasource(httpClient = get())
+    single<RemoteCharacterDataSource> {
+        KtorRemoteCharacterDataSource(httpClient = get())
     }
 
-    single<LocalCharacterDatasource>(named(NAME_TRANSIENT_CHARACTER_DATA_SOURCE)) {
-        LocalTransientCharacterDatasource()
+    single<LocalCharacterDataSource>(named(NAME_TRANSIENT_CHARACTER_DATA_SOURCE)) {
+        LocalTransientCharacterDataSource()
     }
 
     single<CharacterRepository> {
         DefaultCharacterRepository(
-            localPersistentCharacterDatasource = get<LocalCharacterDatasource>(
+            defaultDispatcher = Dispatchers.Default,
+            localPersistentCharacterDataSource = get<LocalCharacterDataSource>(
                 named(NAME_PERSISTENT_CHARACTER_DATA_SOURCE)
             ),
-            localTransientCharacterDatasource =  get<LocalCharacterDatasource>(
+            localTransientCharacterDataSource =  get<LocalCharacterDataSource>(
                 named(NAME_TRANSIENT_CHARACTER_DATA_SOURCE)
             ),
-            remoteCharacterDatasource = get(),
+            remoteCharacterDataSource = get(),
         )
     }
 }

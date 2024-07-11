@@ -10,16 +10,16 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Name
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Race
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Realm
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Spouse
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDatasource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character as DomainCharacter
 
-internal class RoomLocalPersistentCharacterDatasource(
+internal class RoomLocalPersistentCharacterDataSource(
     private val characterDao: CharacterDao,
-) : LocalCharacterDatasource {
+) : LocalCharacterDataSource {
 
     override fun getAll(): Flow<List<DomainCharacter>> = characterDao.getAll()
         .flowOn(Dispatchers.IO)

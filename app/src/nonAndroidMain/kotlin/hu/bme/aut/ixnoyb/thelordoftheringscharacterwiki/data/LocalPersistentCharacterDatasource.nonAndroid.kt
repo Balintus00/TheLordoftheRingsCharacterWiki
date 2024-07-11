@@ -15,16 +15,16 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Name
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Race
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Realm
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Spouse
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDatasource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character as DomainCharacter
 
-internal class SqlDelightLocalPersistentCharacterDatasource(
+internal class SqlDelightLocalPersistentCharacterDataSource(
     private val characterQueries: CharacterQueries,
-) : LocalCharacterDatasource {
+) : LocalCharacterDataSource {
 
     override fun getAll(): Flow<List<DomainCharacter>> = characterQueries
         .selectAll { id: String,

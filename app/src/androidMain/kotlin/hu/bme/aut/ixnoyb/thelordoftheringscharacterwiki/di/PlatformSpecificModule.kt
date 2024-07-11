@@ -2,8 +2,8 @@ package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.di
 
 import androidx.room.Room
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.AppDatabase
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.RoomLocalPersistentCharacterDatasource
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDatasource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.RoomLocalPersistentCharacterDataSource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDataSource
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -24,7 +24,7 @@ actual val platformSpecificModule = module {
         database.characterDao()
     }
 
-    single<LocalCharacterDatasource>(named(NAME_PERSISTENT_CHARACTER_DATA_SOURCE)) {
-        RoomLocalPersistentCharacterDatasource(get())
+    single<LocalCharacterDataSource>(named(NAME_PERSISTENT_CHARACTER_DATA_SOURCE)) {
+        RoomLocalPersistentCharacterDataSource(get())
     }
 }
