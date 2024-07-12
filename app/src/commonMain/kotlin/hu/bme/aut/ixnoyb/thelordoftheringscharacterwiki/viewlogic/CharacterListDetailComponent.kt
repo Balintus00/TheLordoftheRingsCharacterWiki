@@ -2,7 +2,7 @@ package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic
 
 import co.touchlab.kermit.Logger
 import com.arkivanov.decompose.ComponentContext
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.ui.utility.getViewStateStateFlow
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.CharacterListDetailComponent.ViewState
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.store.CharacterDetailsStore
@@ -37,9 +37,9 @@ internal class DefaultCharacterListDetailComponent(
     componentContext: ComponentContext,
     private val characterListStore: CharacterListStore,
     private val clearCharacterDetailsStoreAction: () -> Unit,
-    private val createAndGetCharacterDetailsStoreAction: (characterId: Id) -> CharacterDetailsStore,
+    private val createAndGetCharacterDetailsStoreAction: (characterID: ID) -> CharacterDetailsStore,
     private val getCharacterDetailsStoreAction: () -> CharacterDetailsStore?,
-    private val navigateToCharacterListOrDetailsComponent: (Id?) -> Unit,
+    private val navigateToCharacterListOrDetailsComponent: (ID?) -> Unit,
     private val navigateToInformationComponentAction: () -> Unit,
 ) : CharacterListDetailComponent, ComponentContext by componentContext {
 
@@ -61,7 +61,7 @@ internal class DefaultCharacterListDetailComponent(
             }
 
             override fun selectCharacter(characterId: String) {
-                getAndUpdateSelectedCharacterDetailsStore(Id(characterId))
+                getAndUpdateSelectedCharacterDetailsStore(ID(characterId))
             }
         }
     )
@@ -70,8 +70,8 @@ internal class DefaultCharacterListDetailComponent(
         log.w { "Too long character name filter was tried to be used: $filter" }
     }
 
-    private fun getAndUpdateSelectedCharacterDetailsStore(characterId: Id) {
-        collectCharacterDetailsState(createAndGetCharacterDetailsStoreAction(characterId))
+    private fun getAndUpdateSelectedCharacterDetailsStore(characterID: ID) {
+        collectCharacterDetailsState(createAndGetCharacterDetailsStoreAction(characterID))
     }
 
     override val viewState: StateFlow<ViewState> = _viewState.asStateFlow()
@@ -115,7 +115,7 @@ internal class DefaultCharacterListDetailComponent(
                             }
 
                         override fun selectCharacter(characterId: String) {
-                            getAndUpdateSelectedCharacterDetailsStore(Id(characterId))
+                            getAndUpdateSelectedCharacterDetailsStore(ID(characterId))
                         }
                     }
                 }
@@ -140,7 +140,7 @@ internal class DefaultCharacterListDetailComponent(
                         override val characterDetailsViewState = updatedCharacterDetailsViewState
 
                         override fun selectCharacter(characterId: String) {
-                            getAndUpdateSelectedCharacterDetailsStore(Id(characterId))
+                            getAndUpdateSelectedCharacterDetailsStore(ID(characterId))
                         }
                     }
                 }
@@ -150,7 +150,7 @@ internal class DefaultCharacterListDetailComponent(
 
     override fun navigateToCharacterListOrDetails() {
         navigateToCharacterListOrDetailsComponent(
-            getCharacterDetailsStoreAction()?.state?.characterId,
+            getCharacterDetailsStoreAction()?.state?.characterID,
         )
     }
 

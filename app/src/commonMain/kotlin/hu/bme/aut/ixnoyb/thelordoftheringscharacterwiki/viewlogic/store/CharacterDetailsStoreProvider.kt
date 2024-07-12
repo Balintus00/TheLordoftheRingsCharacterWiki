@@ -6,7 +6,7 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.CharacterRepository
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.store.CharacterDetailsStore.Intent
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.store.CharacterDetailsStore.Intent.Retry
@@ -25,7 +25,7 @@ import org.koin.core.component.inject
 
 internal class CharacterDetailsStoreProvider(
     private val storeFactory: StoreFactory,
-    private val characterId: Id,
+    private val characterID: ID,
 ) : KoinComponent {
 
     private val characterRepository: CharacterRepository by inject()
@@ -33,11 +33,11 @@ internal class CharacterDetailsStoreProvider(
     fun create(): CharacterDetailsStore =
         object : CharacterDetailsStore, Store<Intent, State, Nothing> by storeFactory.create(
             name = STORE_NAME,
-            initialState = Loading(characterId),
+            initialState = Loading(characterID),
             bootstrapper = SimpleBootstrapper<Action>(LoadCharacter),
             executorFactory = {
                 Executor(
-                    characterId = characterId,
+                    characterID = characterID,
                     repository = characterRepository,
                 )
             },
@@ -50,7 +50,7 @@ internal class CharacterDetailsStoreProvider(
     }
 
     private class Executor(
-        private val characterId: Id,
+        private val characterID: ID,
         private val repository: CharacterRepository,
     ) : CoroutineExecutor<Intent, Action, State, Message, Nothing>() {
 
@@ -66,7 +66,7 @@ internal class CharacterDetailsStoreProvider(
             characterCollectingJob?.cancel()
 
             characterCollectingJob = scope.launch {
-                repository.getByID(characterId).collect {
+                repository.getByID(characterID).collect {
                     it?.let { dispatch(SuccessfulLoading(it)) } ?: dispatch(FailedLoading)
                 }
             }
@@ -81,7 +81,7 @@ internal class CharacterDetailsStoreProvider(
 
                     scope.launch {
                         try {
-                            dispatch(SuccessfulLoading(repository.loadByID(characterId)))
+                            dispatch(SuccessfulLoading(repository.loadByID(characterID)))
                         } catch (t: Throwable) {
                             dispatch(FailedLoading)
                         }
@@ -104,8 +104,8 @@ internal class CharacterDetailsStoreProvider(
 
         override fun State.reduce(msg: Message): State = when (msg) {
             is SuccessfulLoading -> Loaded(character = msg.character)
-            is FailedLoading -> LoadingFailed(characterId)
-            is StartedLoading -> Loading(characterId)
+            is FailedLoading -> LoadingFailed(characterID)
+            is StartedLoading -> Loading(characterID)
         }
     }
 

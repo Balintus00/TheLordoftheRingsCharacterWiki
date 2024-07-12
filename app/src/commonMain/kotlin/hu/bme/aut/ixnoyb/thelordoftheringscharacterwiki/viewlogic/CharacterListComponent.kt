@@ -3,7 +3,7 @@ package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic
 import co.touchlab.kermit.Logger
 import com.arkivanov.decompose.ComponentContext
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterNameFilter
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.ui.utility.getViewStateStateFlow
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.CharacterListComponent.ViewState
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.CharacterListComponent.ViewState.CharactersAvailable
@@ -62,7 +62,7 @@ interface CharacterListComponent {
 internal class DefaultCharacterListComponent(
     componentContext: ComponentContext,
     val store: CharacterListStore,
-    private val navigateToCharacterDetailsComponentAction: (Id) -> Unit,
+    private val navigateToCharacterDetailsComponentAction: (ID) -> Unit,
     private val navigateToCharacterListWithDetailsComponentAction: () -> Unit,
     private val navigateToInformationComponentAction: () -> Unit,
 ) : CharacterListComponent, ComponentContext by componentContext {
@@ -82,7 +82,7 @@ internal class DefaultCharacterListComponent(
     )
 
     override fun navigateToCharacterDetails(characterId: String) {
-        navigateToCharacterDetailsComponentAction(Id(characterId))
+        navigateToCharacterDetailsComponentAction(ID(characterId))
     }
 
     override fun navigateToCharacterListWithDetails() {

@@ -3,7 +3,7 @@ package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository
 import co.touchlab.kermit.Logger
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterNameFilter
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageSpecification
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDataSource
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.RemoteCharacterDataSource
@@ -29,7 +29,7 @@ internal class DefaultCharacterRepository(
             localPersistentCharacterDataSource
         }.getAll().flowOn(defaultDispatcher)
 
-    override fun getByID(id: Id): Flow<Character?> =
+    override fun getByID(id: ID): Flow<Character?> =
         localTransientCharacterDataSource.getById(id).combine(
             localPersistentCharacterDataSource.getById(id)
         ) { transientCharacter, persistentCharacter ->
@@ -40,7 +40,7 @@ internal class DefaultCharacterRepository(
             }
         }.flowOn(defaultDispatcher)
 
-    override suspend fun loadByID(id: Id): Character = withContext(defaultDispatcher) {
+    override suspend fun loadByID(id: ID): Character = withContext(defaultDispatcher) {
         remoteCharacterDataSource.getById(id)
     }
 

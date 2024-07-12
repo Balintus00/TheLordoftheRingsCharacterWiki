@@ -6,14 +6,14 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Death
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Gender
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Hair
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Height
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Name
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Race
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Realm
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Spouse
 
 internal fun createDomainCharacter(
-    id: Id = Id(""),
+    id: ID = ID(""),
     birth: Birth = Birth(""),
     death: Death = Death(""),
     gender: Gender = Gender(""),

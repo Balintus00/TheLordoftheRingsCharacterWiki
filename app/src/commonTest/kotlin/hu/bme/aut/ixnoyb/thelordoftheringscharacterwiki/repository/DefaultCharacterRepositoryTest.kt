@@ -3,7 +3,7 @@ package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository
 import app.cash.turbine.test
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterNameFilter
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterPage
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageNumber
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageSize
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageSpecification
@@ -43,7 +43,10 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                     When("getAll is called") {
                         val result = repository.getAll(filter)
 
-                        Then("result flow should contain characters returned by persistent data source") {
+                        Then(
+                            "result flow should contain characters " +
+                                    "returned by persistent data source"
+                        ) {
                             result.test {
                                 awaitItem() shouldBe characters
                                 awaitComplete()
@@ -74,7 +77,10 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                     When("getAll is called") {
                         val result = repository.getAll(filter)
 
-                        Then("result flow should contain characters returned by transient data source") {
+                        Then(
+                            "result flow should contain characters " +
+                                    "returned by transient data source"
+                        ) {
                             result.test {
                                 awaitItem() shouldBe characters
                                 awaitComplete()
@@ -89,7 +95,7 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
     Context("getByID returns the proper Character based on the state of local data sources") {
 
         Given("a character ID") {
-            val characterID = Id("1")
+            val characterID = ID("1")
 
             And("localTransientCharacterDataSource contains a character with such ID") {
                 val transientCharacter = createDomainCharacter(id = characterID)
@@ -125,7 +131,9 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                         When("getByID is called") {
                             val result = repository.getByID(characterID)
 
-                            Then("result should be character retrieved from transient data source") {
+                            Then(
+                                "result should be character retrieved from transient data source"
+                            ) {
                                 result.test {
                                     awaitItem() shouldBe transientCharacter
                                     awaitComplete()
@@ -135,7 +143,9 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                     }
                 }
 
-                And("localPersistentCharacterDataSource doesn't contain a character with such ID") {
+                And(
+                    "localPersistentCharacterDataSource doesn't contain a character with such ID"
+                ) {
                     val persistentDataSource = createFakeLocalCharacterDatasource(
                         getByIdAction = { _ -> flowOf(null) },
                     )
@@ -151,7 +161,9 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                         When("getByID is called") {
                             val result = repository.getByID(characterID)
 
-                            Then("result should be character retrieved from transient data source") {
+                            Then(
+                                "result should be character retrieved from transient data source"
+                            ) {
                                 result.test {
                                     awaitItem() shouldBe transientCharacter
                                     awaitComplete()
@@ -162,7 +174,9 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                 }
             }
 
-            And("localTransientCharacterDataSource doesn't contain a character with such ID") {
+            And(
+                "localTransientCharacterDataSource doesn't contain a character with such ID"
+            ) {
                 val transientDataSource = createFakeLocalCharacterDatasource(
                     getByIdAction = { _ -> flowOf(null) }
                 )
@@ -190,7 +204,9 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                         When("getByID is called") {
                             val result = repository.getByID(characterID)
 
-                            Then("result should be character retrieved from transient data source") {
+                            Then(
+                                "result should be character retrieved from transient data source"
+                            ) {
                                 result.test {
                                     awaitItem() shouldBe persistentCharacter
                                     awaitComplete()
@@ -200,7 +216,9 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                     }
                 }
 
-                And("localPersistentCharacterDataSource doesn't contain a character with such ID") {
+                And(
+                    "localPersistentCharacterDataSource doesn't contain a character with such ID"
+                ) {
                     val persistentDataSource = createFakeLocalCharacterDatasource(
                         getByIdAction = { _ -> flowOf(null) },
                     )
@@ -232,7 +250,7 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
     Context("loadByID properly returns data from remote data source") {
 
         Given("a character ID") {
-            val characterID = Id("1")
+            val characterID = ID("1")
 
             And("remote data source returns character with ID") {
                 val character = createDomainCharacter(id = characterID)
@@ -352,11 +370,17 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                                     When("loadPage is called") {
                                         val result = repository.loadPage(filter, page)
 
-                                        Then("result should contain characters loaded by remote data source") {
+                                        Then(
+                                            "result should contain characters " +
+                                                    "loaded by remote data source"
+                                        ) {
                                             result.first shouldBe characters
                                         }
 
-                                        Then("result should contain information that next page exists") {
+                                        Then(
+                                            "result should contain information " +
+                                                    "that next page exists"
+                                        ) {
                                             result.second shouldBe true
                                         }
                                     }
@@ -467,11 +491,17 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                                     When("loadPage is called") {
                                         val result = repository.loadPage(filter, page)
 
-                                        Then("result should contain characters loaded by remote data source") {
+                                        Then(
+                                            "result should contain characters loaded " +
+                                                    "by remote data source"
+                                        ) {
                                             result.first shouldBe characters
                                         }
 
-                                        Then("result should contain information that next page doesn't exist") {
+                                        Then(
+                                            "result should contain information " +
+                                                    "that next page doesn't exist"
+                                        ) {
                                             result.second shouldBe false
                                         }
                                     }
@@ -563,11 +593,15 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                                     When("loadPage is called") {
                                         val result = repository.loadPage(filter, page)
 
-                                        Then("result should be characters from remote data source") {
+                                        Then(
+                                            "result should be characters from remote data source"
+                                        ) {
                                             result.first shouldBe characters
                                         }
 
-                                        Then("result should contain information next page exists") {
+                                        Then(
+                                            "result should contain information next page exists"
+                                        ) {
                                             result.second shouldBe true
                                         }
                                     }
@@ -699,7 +733,9 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                                     result.first shouldBe characters
                                 }
 
-                                Then("result should contain information next page doesn't exist") {
+                                Then(
+                                    "result should contain information next page doesn't exist"
+                                ) {
                                     result.second shouldBe false
                                 }
                             }
@@ -741,7 +777,8 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                             val repository = DefaultCharacterRepository(
                                 defaultDispatcher = UnconfinedTestDispatcher(),
                                 localPersistentCharacterDataSource = persistentDataSource,
-                                localTransientCharacterDataSource = createFakeLocalCharacterDatasource(),
+                                localTransientCharacterDataSource =
+                                createFakeLocalCharacterDatasource(),
                                 remoteCharacterDataSource = remoteDataSource,
                             )
 
@@ -752,7 +789,9 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                                     result.first shouldBe characters
                                 }
 
-                                Then("result should contain information next page doesn't exist") {
+                                Then(
+                                    "result should contain information next page doesn't exist"
+                                ) {
                                     result.second shouldBe false
                                 }
                             }

@@ -10,7 +10,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Death
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Gender
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Hair
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Height
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Name
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageSpecification
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Race
@@ -32,7 +32,7 @@ internal class KtorRemoteCharacterDataSource(
     private val httpClient: HttpClient,
 ) : RemoteCharacterDataSource {
 
-    override suspend fun getById(id: Id): DomainCharacter = withContext(Dispatchers.IO) {
+    override suspend fun getById(id: ID): DomainCharacter = withContext(Dispatchers.IO) {
         require(id.value.isBlank().not()) { ERROR_MESSAGE_INVALID_CHARACTER_ID }
 
         val response = httpClient.get(BASE_URL) {
@@ -53,7 +53,7 @@ internal class KtorRemoteCharacterDataSource(
     }
 
     private fun Character.toDomainCharacter(): DomainCharacter = DomainCharacter(
-        id = Id(id),
+        id = ID(id),
         birth = Birth(birth ?: ""),
         death = Death(death ?: ""),
         gender = Gender(gender ?: ""),

@@ -1,7 +1,7 @@
 package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data
 
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ internal class LocalTransientCharacterDataSource : LocalCharacterDataSource {
 
     override fun getAll(): Flow<List<Character>> = storedCharacters.asStateFlow()
 
-    override fun getById(id: Id): Flow<Character?> =
+    override fun getById(id: ID): Flow<Character?> =
         storedCharacters.map { characterList -> characterList.firstOrNull { it.id == id } }
 
     override suspend fun insertAll(vararg characters: Character) {

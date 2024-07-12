@@ -8,7 +8,7 @@ import com.arkivanov.decompose.router.stack.popWhile
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.CharacterFeatureRootComponent.*
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.store.CharacterDetailsStore
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.viewlogic.store.CharacterDetailsStoreProvider
@@ -88,7 +88,7 @@ internal class DefaultCharacterFeatureRootComponent(
                     DefaultCharacterDetailsComponent(
                         componentContext = componentContext,
                         store = characterDetailsStore ?: createAndSetCharacterDetailsStore(
-                            Id(config.characterId)
+                            ID(config.characterId)
                         ),
                         navigateBackAction = {
                             navigation.popWhile { config -> config !is Config.CharacterList }
@@ -135,11 +135,11 @@ internal class DefaultCharacterFeatureRootComponent(
         }
     }
 
-    private fun createAndSetCharacterDetailsStore(characterId: Id): CharacterDetailsStore {
+    private fun createAndSetCharacterDetailsStore(characterID: ID): CharacterDetailsStore {
         characterDetailsStore?.dispose()
         instanceKeeper.removeStore<CharacterDetailsStore>()
         return instanceKeeper.createAndGetStore {
-            CharacterDetailsStoreProvider(storeFactory, characterId).create()
+            CharacterDetailsStoreProvider(storeFactory, characterID).create()
         }
     }
 

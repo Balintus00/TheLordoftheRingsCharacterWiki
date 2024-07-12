@@ -5,7 +5,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Death
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Gender
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Hair
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Height
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Name
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Race
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Realm
@@ -26,7 +26,7 @@ internal class RoomLocalPersistentCharacterDataSource(
         .map { characterList -> characterList.map { it.toDomainCharacter() } }
 
     private fun Character.toDomainCharacter(): DomainCharacter = DomainCharacter(
-        id = Id(id),
+        id = ID(id),
         birth = Birth(birth),
         death = Death(death),
         gender = Gender(gender),
@@ -38,7 +38,7 @@ internal class RoomLocalPersistentCharacterDataSource(
         spouse = Spouse(spouse),
     )
 
-    override fun getById(id: Id): Flow<DomainCharacter?> = characterDao.getById(id.value)
+    override fun getById(id: ID): Flow<DomainCharacter?> = characterDao.getById(id.value)
         .flowOn(Dispatchers.IO)
         .map { it?.toDomainCharacter() }
 

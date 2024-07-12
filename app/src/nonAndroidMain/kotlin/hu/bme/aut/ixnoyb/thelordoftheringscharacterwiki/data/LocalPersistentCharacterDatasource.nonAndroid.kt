@@ -10,7 +10,7 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Death
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Gender
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Hair
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Height
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Id
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Name
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Race
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Realm
@@ -38,7 +38,7 @@ internal class SqlDelightLocalPersistentCharacterDataSource(
                      realm: String,
                      spouse: String ->
             DomainCharacter(
-                Id(id),
+                ID(id),
                 Birth(birth),
                 Death(death),
                 Gender(gender),
@@ -53,7 +53,7 @@ internal class SqlDelightLocalPersistentCharacterDataSource(
         .asFlow()
         .mapToList(Dispatchers.IO)
 
-    override fun getById(id: Id): Flow<DomainCharacter?> {
+    override fun getById(id: ID): Flow<DomainCharacter?> {
         return characterQueries.selectById(
             id = id.value,
             mapper = { resultId: String,
@@ -67,7 +67,7 @@ internal class SqlDelightLocalPersistentCharacterDataSource(
                        realm: String,
                        spouse: String ->
                 DomainCharacter(
-                    Id(resultId),
+                    ID(resultId),
                     Birth(birth),
                     Death(death),
                     Gender(gender),

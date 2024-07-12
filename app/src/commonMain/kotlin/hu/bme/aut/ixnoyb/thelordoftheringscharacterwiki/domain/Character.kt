@@ -3,7 +3,7 @@ package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain
 import kotlin.jvm.JvmInline
 
 internal data class Character(
-    val id: Id,
+    val id: ID,
     val birth: Birth,
     val death: Death,
     val gender: Gender,
@@ -16,7 +16,7 @@ internal data class Character(
 )
 
 @JvmInline
-internal value class Id(val value: String)
+internal value class ID(val value: String)
 
 @JvmInline
 internal value class Height(val value: String)
