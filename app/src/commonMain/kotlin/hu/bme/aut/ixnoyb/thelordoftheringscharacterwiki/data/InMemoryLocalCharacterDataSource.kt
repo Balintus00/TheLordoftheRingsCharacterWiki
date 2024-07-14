@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
-internal class LocalTransientCharacterDataSource : LocalCharacterDataSource {
+internal class InMemoryLocalCharacterDataSource : LocalCharacterDataSource {
 
     private val storedCharacters = MutableStateFlow(emptyList<Character>())
 

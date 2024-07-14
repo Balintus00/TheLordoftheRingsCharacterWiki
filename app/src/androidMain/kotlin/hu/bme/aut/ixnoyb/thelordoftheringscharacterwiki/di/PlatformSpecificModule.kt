@@ -1,30 +1,10 @@
 package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.di
 
-import androidx.room.Room
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.AppDatabase
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.RoomLocalPersistentCharacterDataSource
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDataSource
-import org.koin.core.qualifier.named
+import app.cash.sqldelight.db.SqlDriver
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.SqlDriverFactory
 import org.koin.dsl.module
 
-private const val DATABASE_NAME = "the-lord-of-the-rings-character-wiki-db"
+internal actual val platformSpecificModule = module {
 
-actual val platformSpecificModule = module {
-
-    single {
-        Room.databaseBuilder(
-            get(),
-            AppDatabase::class.java,
-            DATABASE_NAME
-        ).build()
-    }
-
-    single {
-        val database: AppDatabase = get()
-        database.characterDao()
-    }
-
-    single<LocalCharacterDataSource>(named(NAME_PERSISTENT_CHARACTER_DATA_SOURCE)) {
-        RoomLocalPersistentCharacterDataSource(get())
-    }
+    single<SqlDriver> { SqlDriverFactory(context = get()).createDriver() }
 }

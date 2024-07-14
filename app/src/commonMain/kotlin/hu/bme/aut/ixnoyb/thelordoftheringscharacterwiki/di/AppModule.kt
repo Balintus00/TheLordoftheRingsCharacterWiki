@@ -1,7 +1,9 @@
 package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.di
 
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.SqlDelightDatabase
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.KtorRemoteCharacterDataSource
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.LocalTransientCharacterDataSource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.SqlDelightLocalCharacterDataSource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.InMemoryLocalCharacterDataSource
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.getKtorEngine
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.CharacterRepository
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.DefaultCharacterRepository
@@ -56,8 +58,21 @@ internal val appModule = module {
         KtorRemoteCharacterDataSource(httpClient = get())
     }
 
+    single {
+        SqlDelightDatabase(driver = get())
+    }
+
+    single {
+        val database: SqlDelightDatabase = get()
+        database.characterQueries
+    }
+
+    single<LocalCharacterDataSource>(named(NAME_PERSISTENT_CHARACTER_DATA_SOURCE)) {
+        SqlDelightLocalCharacterDataSource(characterQueries = get())
+    }
+
     single<LocalCharacterDataSource>(named(NAME_TRANSIENT_CHARACTER_DATA_SOURCE)) {
-        LocalTransientCharacterDataSource()
+        InMemoryLocalCharacterDataSource()
     }
 
     single<CharacterRepository> {

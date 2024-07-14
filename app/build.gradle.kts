@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotest.multiplatform)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.kover)
     alias(libs.plugins.sqldelight)
 }
@@ -89,13 +88,6 @@ kotlin {
                 implementation(libs.material3.windowSizeClass)
                 implementation(libs.mvikotlin.core)
                 implementation(libs.mvikotlin.coroutines)
-            }
-        }
-
-        val nonAndroidMain by creating {
-            dependsOn(commonMain)
-
-            dependencies {
                 implementation(libs.sqldelight.coroutines)
             }
         }
@@ -109,28 +101,23 @@ kotlin {
                 implementation(libs.coroutines.android)
                 implementation(libs.koin.android)
                 implementation(libs.ktor.client.okhttp)
-                implementation(libs.room.ktx)
-                implementation(libs.room.runtime)
+                implementation(libs.sqldelight.driver.android)
             }
         }
 
         val desktopMain by getting {
-            dependsOn(nonAndroidMain)
-
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.ktor.client.okhttp)
                 implementation(libs.coroutines.swing)
-                implementation(libs.sqldelight.jvm.driver)
+                implementation(libs.sqldelight.driver.jvm)
             }
         }
 
         val iosMain by getting {
-            dependsOn(nonAndroidMain)
-
             dependencies {
                 implementation(libs.ktor.client.darwin)
-                implementation(libs.sqldelight.native.driver)
+                implementation(libs.sqldelight.driver.native)
             }
         }
 
@@ -148,12 +135,6 @@ kotlin {
             }
         }
     }
-}
-
-dependencies {
-    val androidKspConfiguration = "kspAndroid"
-
-    add(androidKspConfiguration, libs.room.compiler)
 }
 
 android {
@@ -211,15 +192,6 @@ android {
             it.useJUnitPlatform()
         }
     }
-
-    applicationVariants.all {
-        val variantName = name
-        sourceSets {
-            getByName("main") {
-                kotlin.srcDir(File("build/generated/ksp/$variantName/kotlin"))
-            }
-        }
-    }
 }
 
 compose.desktop {
@@ -248,10 +220,6 @@ buildkonfig {
 
         buildConfigField(STRING, "THE_ONE_API_KEY", apiKey)
     }
-}
-
-ksp {
-    arg("KOIN_CONFIG_CHECK", "true")
 }
 
 sqldelight {
