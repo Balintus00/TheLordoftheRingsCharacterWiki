@@ -18,7 +18,7 @@ internal class InMemoryLocalCharacterDataSource : LocalCharacterDataSource {
     override fun getById(id: ID): Flow<Character?> =
         storedCharacters.map { characterList -> characterList.firstOrNull { it.id == id } }
 
-    override suspend fun insertAll(vararg characters: Character) {
+    override suspend fun insertAll(characters: List<Character>) {
         storedCharacters.update { storedCharacters.value + characters }
     }
 

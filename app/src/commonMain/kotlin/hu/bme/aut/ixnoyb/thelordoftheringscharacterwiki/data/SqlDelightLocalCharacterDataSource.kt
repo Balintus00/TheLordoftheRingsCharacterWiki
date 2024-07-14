@@ -84,7 +84,7 @@ internal class SqlDelightLocalCharacterDataSource(
             .mapToOneOrNull(Dispatchers.IO)
     }
 
-    override suspend fun insertAll(vararg characters: DomainCharacter) =
+    override suspend fun insertAll(characters: List<DomainCharacter>) =
         withContext(Dispatchers.IO) {
             characters.forEach {
                 characterQueries.insertCharacter(

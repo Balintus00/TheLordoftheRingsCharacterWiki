@@ -26,4 +26,8 @@ allprojects {
             dependsOn(tasks.withType<Detekt>())
         }
     }
+
+    tasks.withType<Detekt>().configureEach {
+        exclude { it.file.path.contains("build") }
+    }
 }

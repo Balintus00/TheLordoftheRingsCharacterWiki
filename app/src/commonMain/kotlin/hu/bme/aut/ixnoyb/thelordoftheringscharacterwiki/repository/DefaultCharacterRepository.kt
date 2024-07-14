@@ -75,7 +75,7 @@ internal class DefaultCharacterRepository(
                 }
             }
 
-            destinationLocalDatasource.insertAll(*nextPage.characters.toTypedArray())
+            destinationLocalDatasource.insertAll(nextPage.characters)
 
             nextPage.run { characters to isNextPageExist }
         } catch (t: Throwable) {

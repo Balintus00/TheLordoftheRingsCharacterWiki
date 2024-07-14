@@ -10,7 +10,7 @@ internal interface LocalCharacterDataSource {
 
     fun getById(id: ID): Flow<Character?>
 
-    suspend fun insertAll(vararg characters: Character)
+    suspend fun insertAll(characters: List<Character>)
 
     suspend fun clear()
 }

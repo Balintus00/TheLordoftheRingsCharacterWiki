@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 internal inline fun createFakeLocalCharacterDatasource(
     crossinline getAllAction: () -> Flow<List<Character>> = { throw NotImplementedError() },
     crossinline getByIdAction: (id: ID) -> Flow<Character?> = { throw NotImplementedError() },
-    crossinline insertAllAction: (characters: Array<out Character>) -> Unit = {
+    crossinline insertAllAction: (characters: List<Character>) -> Unit = {
         throw NotImplementedError()
     },
     crossinline clearAction: () -> Unit = { throw NotImplementedError() },
@@ -17,7 +17,7 @@ internal inline fun createFakeLocalCharacterDatasource(
 
     override fun getById(id: ID): Flow<Character?> = getByIdAction(id)
 
-    override suspend fun insertAll(vararg characters: Character) {
+    override suspend fun insertAll(characters: List<Character>) {
         insertAllAction(characters)
     }
 
