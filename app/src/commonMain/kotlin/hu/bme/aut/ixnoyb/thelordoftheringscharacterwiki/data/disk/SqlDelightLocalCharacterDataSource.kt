@@ -1,11 +1,11 @@
-package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data
+package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.disk
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.Character
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.CharacterQueries
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Birth
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Death
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Gender
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Hair
@@ -20,13 +20,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character as DomainCharacter
 
 internal class SqlDelightLocalCharacterDataSource(
     private val characterQueries: CharacterQueries,
 ) : LocalCharacterDataSource {
 
-    override fun getAll(): Flow<List<DomainCharacter>> = characterQueries
+    override fun getAll(): Flow<List<Character>> = characterQueries
         .selectAll { id: String,
                      birth: String,
                      death: String,
@@ -37,7 +36,7 @@ internal class SqlDelightLocalCharacterDataSource(
                      race: String,
                      realm: String,
                      spouse: String ->
-            DomainCharacter(
+            Character(
                 ID(id),
                 Birth(birth),
                 Death(death),
@@ -53,7 +52,7 @@ internal class SqlDelightLocalCharacterDataSource(
         .asFlow()
         .mapToList(Dispatchers.IO)
 
-    override fun getById(id: ID): Flow<DomainCharacter?> {
+    override fun getById(id: ID): Flow<Character?> {
         return characterQueries.selectById(
             id = id.value,
             mapper = { resultId: String,
@@ -66,7 +65,7 @@ internal class SqlDelightLocalCharacterDataSource(
                        race: String,
                        realm: String,
                        spouse: String ->
-                DomainCharacter(
+                Character(
                     ID(resultId),
                     Birth(birth),
                     Death(death),
@@ -84,11 +83,11 @@ internal class SqlDelightLocalCharacterDataSource(
             .mapToOneOrNull(Dispatchers.IO)
     }
 
-    override suspend fun insertAll(characters: List<DomainCharacter>) =
+    override suspend fun insertAll(characters: List<Character>) =
         withContext(Dispatchers.IO) {
             characters.forEach {
                 characterQueries.insertCharacter(
-                    Character(
+                    hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.Character(
                         id = it.id.value,
                         birth = it.birth.value,
                         death = it.death.value,

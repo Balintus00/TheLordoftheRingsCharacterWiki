@@ -1,4 +1,4 @@
-package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data
+package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.memory
 
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID

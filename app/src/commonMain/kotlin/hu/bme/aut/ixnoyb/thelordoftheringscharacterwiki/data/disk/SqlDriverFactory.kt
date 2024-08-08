@@ -1,4 +1,4 @@
-package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data
+package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.disk
 
 import app.cash.sqldelight.db.SqlDriver
 

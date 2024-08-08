@@ -1,8 +1,4 @@
-// False positive error, the current naming is the correct according to the official conventions
-//  https://kotlinlang.org/docs/coding-conventions.html#multiplatform-projects
-@file:Suppress("MatchingDeclarationName")
-
-package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data
+package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.disk
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver

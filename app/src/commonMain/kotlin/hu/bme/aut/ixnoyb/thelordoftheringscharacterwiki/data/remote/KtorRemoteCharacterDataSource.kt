@@ -1,8 +1,8 @@
-package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data
+package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.remote
 
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.BuildKonfig
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.model.Character
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.model.CharacterListPage
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.remote.dto.Character
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.remote.dto.CharacterListPage
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Birth
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterNameFilter
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterPage
