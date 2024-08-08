@@ -77,7 +77,6 @@ internal val appModule = module {
 
     single<CharacterRepository> {
         DefaultCharacterRepository(
-            defaultDispatcher = Dispatchers.Default,
             localPersistentCharacterDataSource = get<LocalCharacterDataSource>(
                 named(NAME_PERSISTENT_CHARACTER_DATA_SOURCE)
             ),

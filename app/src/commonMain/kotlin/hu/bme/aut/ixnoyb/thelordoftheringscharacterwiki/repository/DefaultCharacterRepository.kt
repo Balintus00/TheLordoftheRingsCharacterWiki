@@ -5,16 +5,19 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.Character
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.CharacterNameFilter
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageSpecification
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.logging.messageOrDefault
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.LocalCharacterDataSource
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.RemoteCharacterDataSource
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
 internal class DefaultCharacterRepository(
-    private val defaultDispatcher: CoroutineDispatcher,
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val localPersistentCharacterDataSource: LocalCharacterDataSource,
     private val localTransientCharacterDataSource: LocalCharacterDataSource,
     private val remoteCharacterDataSource: RemoteCharacterDataSource,
@@ -41,7 +44,21 @@ internal class DefaultCharacterRepository(
         }.flowOn(defaultDispatcher)
 
     override suspend fun loadByID(id: ID): Character = withContext(defaultDispatcher) {
-        remoteCharacterDataSource.getById(id)
+        try {
+            remoteCharacterDataSource.getById(id)
+        } catch (ce: CancellationException) {
+            handleCancellationException(ce)
+        } catch (t: Throwable) {
+            log.w(t) { t.messageOrDefault }
+
+            throw IllegalStateException(EXCEPTION_MESSAGE_OPERATION_FAILED, t)
+        }
+    }
+
+    private fun handleCancellationException(exception: CancellationException): Nothing {
+        log.i(exception) { LOG_MESSAGE_COROUTINE_CANCELLED }
+
+        throw exception
     }
 
     override suspend fun loadPage(
@@ -78,13 +95,20 @@ internal class DefaultCharacterRepository(
             destinationLocalDatasource.insertAll(nextPage.characters)
 
             nextPage.run { characters to isNextPageExist }
-        } catch (t: Throwable) {
+        } catch (ce: CancellationException) {
+            handleCancellationException(ce)
+        }
+        catch (t: Throwable) {
             log.i(t) { LOG_MESSAGE_FAILED_PAGE_LOADING }
-            throw t
+
+            throw IllegalStateException(EXCEPTION_MESSAGE_OPERATION_FAILED, t)
         }
     }
 
     companion object {
+        const val EXCEPTION_MESSAGE_OPERATION_FAILED = "Operation failed!"
+
         private const val LOG_MESSAGE_FAILED_PAGE_LOADING = "Failed to load page!"
+        private const val LOG_MESSAGE_COROUTINE_CANCELLED = "Coroutine was cancelled!"
     }
 }

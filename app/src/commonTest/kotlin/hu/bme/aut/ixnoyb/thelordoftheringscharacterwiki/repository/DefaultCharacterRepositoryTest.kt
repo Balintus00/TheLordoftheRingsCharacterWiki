@@ -7,18 +7,40 @@ import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.ID
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageNumber
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageSize
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.domain.PageSpecification
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.DefaultCharacterRepository.Companion.EXCEPTION_MESSAGE_OPERATION_FAILED
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.createFakeLocalCharacterDatasource
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.repository.datasource.createFakeRemoteCharacterDatasource
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.testutility.DEFAULT_DISPATCHER_THREAD_NAME_PREFIX
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.testutility.WAITING_FOR_TEST_BACKGROUND_TASK_DELAY
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.testutility.createDomainCharacter
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.testutility.getThreadName
 import io.kotest.assertions.fail
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.cancellation.CancellationException
 
-@OptIn(ExperimentalCoroutinesApi::class)
-@Suppress("unused")
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalStdlibApi::class, DelicateCoroutinesApi::class)
+@Suppress("unused", "LargeClass")
 class DefaultCharacterRepositoryTest : BehaviorSpec({
 
     Context("getAll should retrieve the data from the proper data source") {
@@ -256,7 +278,7 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                 val character = createDomainCharacter(id = characterID)
 
                 val remoteDataSource = createFakeRemoteCharacterDatasource(
-                    getByIdAction = { id ->
+                    getByIDAction = { id ->
                         if (id == characterID) {
                             character
                         } else {
@@ -283,11 +305,167 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                 }
             }
 
-            And("remote data source throws exception after character with ID is requested") {
-                val exception = IllegalArgumentException()
+            And("loadByID calling context has custom CoroutineName") {
+                val coroutineName = "testCoroutineName"
+
+                And("remote data source returns character and captures coroutine name") {
+                    var remoteCoroutineName: CoroutineName? = null
+
+                    val remoteDataSource = createFakeRemoteCharacterDatasource(
+                        getByIDAction = { _ ->
+                            remoteCoroutineName = currentCoroutineContext()[CoroutineName]
+
+                            createDomainCharacter()
+                        }
+                    )
+
+                    And("a repository") {
+                        val repository = DefaultCharacterRepository(
+                            defaultDispatcher = UnconfinedTestDispatcher(),
+                            localPersistentCharacterDataSource =
+                            createFakeLocalCharacterDatasource(),
+                            localTransientCharacterDataSource =
+                            createFakeLocalCharacterDatasource(),
+                            remoteCharacterDataSource = remoteDataSource,
+                        )
+
+                        When("loadByID is called") {
+                            withContext(CoroutineName(coroutineName)) {
+                                repository.loadByID(characterID)
+                            }
+
+                            Then(
+                                "captured coroutine name should be the same " +
+                                        "that was passed when calling loadByID"
+                            ) {
+                                remoteCoroutineName?.name shouldBe coroutineName
+                            }
+                        }
+                    }
+                }
+            }
+
+            And(
+                "remote data source returns character and captures dispatcher and thread name"
+            ) {
+                var capturedDispatcher: CoroutineDispatcher? = null
+                var capturedThreadName: String? = null
 
                 val remoteDataSource = createFakeRemoteCharacterDatasource(
-                    getByIdAction = { _ -> throw exception }
+                    getByIDAction = { _ ->
+                        capturedDispatcher = coroutineContext[CoroutineDispatcher]
+                        capturedThreadName = getThreadName()
+
+                        createDomainCharacter()
+                    }
+                )
+
+                And("a repository with the default DefaultDispatcher parameter") {
+                    val repository = DefaultCharacterRepository(
+                        localPersistentCharacterDataSource =
+                        createFakeLocalCharacterDatasource(),
+                        localTransientCharacterDataSource =
+                        createFakeLocalCharacterDatasource(),
+                        remoteCharacterDataSource = remoteDataSource,
+                    )
+
+                    When("loadByID is called on a distinct thread") {
+                        val parentDispatcher = newSingleThreadContext(
+                            "distinctThreadPoolContext"
+                        )
+                        var parentThreadName: String?
+
+                        try {
+                            withContext(parentDispatcher) {
+                                parentThreadName = getThreadName()
+                                repository.loadByID(characterID)
+                            }
+                        } catch (t: Throwable) {
+                            fail("Unexpected exception\n${t.stackTraceToString()}")
+                        } finally {
+                            parentDispatcher.close()
+                        }
+
+                        Then("captured dispatcher should be different from parent's") {
+                            capturedDispatcher shouldNotBeSameInstanceAs parentDispatcher
+                        }
+
+                        Then("captured thread name should be different from parent's") {
+                            capturedThreadName shouldNotBe parentThreadName
+                        }
+
+                        Then("captured thread name should have default dispatcher prefix") {
+                            capturedThreadName should {
+                                it?.startsWith(DEFAULT_DISPATCHER_THREAD_NAME_PREFIX) ?: false
+                            }
+                        }
+                    }
+                }
+
+                And("a repository with the a custom Dispatcher") {
+                    val injectedDispatcherThreadName = "injectedDispatcherThreadName"
+                    val injectedDispatcher = newSingleThreadContext(injectedDispatcherThreadName)
+
+                    try {
+                        val repository = DefaultCharacterRepository(
+                            defaultDispatcher = injectedDispatcher,
+                            localPersistentCharacterDataSource =
+                            createFakeLocalCharacterDatasource(),
+                            localTransientCharacterDataSource =
+                            createFakeLocalCharacterDatasource(),
+                            remoteCharacterDataSource = remoteDataSource,
+                        )
+
+                        When("loadByID is called on a distinct thread") {
+                            val parentDispatcher = newSingleThreadContext(
+                                "distinctThreadPoolContext"
+                            )
+                            var parentThreadName: String?
+
+                            try {
+                                withContext(parentDispatcher) {
+                                    parentThreadName = getThreadName()
+                                    repository.loadByID(characterID)
+                                }
+                            } catch (t: Throwable) {
+                                fail("Unexpected exception\n${t.stackTraceToString()}")
+                            } finally {
+                                parentDispatcher.close()
+                            }
+
+                            Then("captured dispatcher should be different from parent's") {
+                                capturedDispatcher shouldNotBeSameInstanceAs parentDispatcher
+                            }
+
+                            Then("captured thread name should be different from parent's") {
+                                capturedThreadName shouldNotBe parentThreadName
+                            }
+
+                            Then(
+                                "captured thread name should start with " +
+                                        "injected dispatcher's Thread's name"
+                            ) {
+                                capturedThreadName should {
+                                    it?.startsWith(injectedDispatcherThreadName) ?: false
+                                }
+                            }
+                        }
+                    } catch (t: Throwable) {
+                        fail("Unexpected exception\n${t.stackTraceToString()}")
+                    } finally {
+                        injectedDispatcher.close()
+                    }
+                }
+            }
+
+            And(
+                "remote data source throws cancellation exception after character with ID " +
+                        "is requested"
+            ) {
+                val exception = CancellationException()
+
+                val remoteDataSource = createFakeRemoteCharacterDatasource(
+                    getByIDAction = { _ -> throw exception }
                 )
 
                 And("a repository") {
@@ -300,14 +478,83 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                     When("loadByID is called") {
 
-                        Then("exception thrown by remote data source should be propagated") {
+                        Then("cancellation exception should be rethrown") {
                             try {
                                 repository.loadByID(characterID)
 
                                 fail("No exception was thrown!")
                             } catch (t: Throwable) {
-                                t shouldBe exception
+                                t shouldBeSameInstanceAs exception
                             }
+                        }
+                    }
+                }
+            }
+
+            And("remote data source throws exception after character with ID is requested") {
+                val exception = IllegalArgumentException()
+
+                val remoteDataSource = createFakeRemoteCharacterDatasource(
+                    getByIDAction = { _ -> throw exception }
+                )
+
+                And("a repository") {
+                    val repository = DefaultCharacterRepository(
+                        defaultDispatcher = UnconfinedTestDispatcher(),
+                        localPersistentCharacterDataSource = createFakeLocalCharacterDatasource(),
+                        localTransientCharacterDataSource = createFakeLocalCharacterDatasource(),
+                        remoteCharacterDataSource = remoteDataSource,
+                    )
+
+                    When("loadByID is called") {
+
+                        Then("proper exception should be thrown") {
+                            try {
+                                repository.loadByID(characterID)
+
+                                fail("No exception was thrown!")
+                            } catch (t: Throwable) {
+                                t shouldBe IllegalStateException(
+                                    EXCEPTION_MESSAGE_OPERATION_FAILED
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            And("remote data source loads for a very long time characters by ID") {
+                var childJob: Job? = null
+
+                val remoteDataSource = createFakeRemoteCharacterDatasource(
+                    getByIDAction = {
+                        childJob = currentCoroutineContext().job
+                        delay(Long.MAX_VALUE)
+
+                        fail("Should be impossible to reach this operation")
+                    }
+                )
+
+                And("a repository") {
+                    val repository = DefaultCharacterRepository(
+                        localPersistentCharacterDataSource = createFakeLocalCharacterDatasource(),
+                        localTransientCharacterDataSource = createFakeLocalCharacterDatasource(),
+                        remoteCharacterDataSource = remoteDataSource,
+                    )
+
+                    When("loadByID is called and its container Job is cancelled") {
+                        val parentJob = CoroutineScope(EmptyCoroutineContext).launch {
+                            repository.loadByID(characterID)
+                        }
+
+                        while (childJob == null) {
+                            delay(WAITING_FOR_TEST_BACKGROUND_TASK_DELAY)
+                        }
+
+                        parentJob.cancelAndJoin()
+
+                        Then("remote data source's operation should be cancelled") {
+                            childJob?.isCancelled shouldBe true
                         }
                     }
                 }
@@ -387,6 +634,39 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                                 }
                             }
 
+                            And(
+                                "transient data source throws CancellationException while inserting"
+                            ) {
+                                val cancellationException = CancellationException()
+
+                                val transientDataSource = createFakeLocalCharacterDatasource(
+                                    clearAction = { /*No-op*/ },
+                                    insertAllAction = { _ -> throw cancellationException }
+                                )
+
+                                And("a repository") {
+                                    val repository = DefaultCharacterRepository(
+                                        defaultDispatcher = UnconfinedTestDispatcher(),
+                                        localPersistentCharacterDataSource =
+                                        createFakeLocalCharacterDatasource(),
+                                        localTransientCharacterDataSource = transientDataSource,
+                                        remoteCharacterDataSource = remoteDataSource,
+                                    )
+
+                                    When("loadPage is called") {
+
+                                        Then("cancellation exception should be rethrown") {
+                                            try {
+                                                repository.loadPage(filter, page)
+                                                fail("Exception expected")
+                                            } catch (t: Throwable) {
+                                                t shouldBeSameInstanceAs cancellationException
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             And("transient data source fails to insert the characters") {
                                 val insertException = IllegalStateException("Insert error")
 
@@ -406,13 +686,46 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                                     When("loadPage is called") {
 
-                                        Then("insertion exception should be thrown") {
+                                        Then("proper exception should be thrown") {
                                             try {
                                                 repository.loadPage(filter, page)
                                                 fail("Exception expected")
                                             } catch (t: Throwable) {
-                                                t shouldBe insertException
+                                                t shouldBe IllegalStateException(
+                                                    EXCEPTION_MESSAGE_OPERATION_FAILED
+                                                )
                                             }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        And(
+                            "transient data source throws CancellationException while clearing"
+                        ) {
+                            val cancellationException = CancellationException()
+                            val transientDataSource = createFakeLocalCharacterDatasource(
+                                clearAction = { throw cancellationException }
+                            )
+
+                            And("a repository") {
+                                val repository = DefaultCharacterRepository(
+                                    defaultDispatcher = UnconfinedTestDispatcher(),
+                                    localPersistentCharacterDataSource =
+                                    createFakeLocalCharacterDatasource(),
+                                    localTransientCharacterDataSource = transientDataSource,
+                                    remoteCharacterDataSource = remoteDataSource,
+                                )
+
+                                When("loadPage is called") {
+
+                                    Then("cancellation exception should be rethrown") {
+                                        try {
+                                            repository.loadPage(filter, page)
+                                            fail("Exception expected")
+                                        } catch (t: Throwable) {
+                                            t shouldBeSameInstanceAs cancellationException
                                         }
                                     }
                                 }
@@ -436,12 +749,14 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                                 When("loadPage is called") {
 
-                                    Then("clearing exception should be thrown") {
+                                    Then("proper exception should be thrown") {
                                         try {
                                             repository.loadPage(filter, page)
                                             fail("Exception expected")
                                         } catch (t: Throwable) {
-                                            t shouldBe clearException
+                                            t shouldBe IllegalStateException(
+                                                EXCEPTION_MESSAGE_OPERATION_FAILED
+                                            )
                                         }
                                     }
                                 }
@@ -511,10 +826,10 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                     }
                 }
 
-                And("remote data source throws exception") {
-                    val remoteLoadingException = IllegalStateException("Remote loading failure")
+                And("remote data source throws CancellationException") {
+                    val cancellationException = CancellationException()
                     val remoteDataSource = createFakeRemoteCharacterDatasource(
-                        getPageAction = { _, _ -> throw  remoteLoadingException }
+                        getPageAction = { _, _ -> throw cancellationException }
                     )
 
                     And("a repository") {
@@ -529,12 +844,44 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                         When("loadPage is called") {
 
-                            Then("remote loading exception should be thrown") {
+                            Then("cancellation exception should be rethrown") {
                                 try {
                                     repository.loadPage(filter, page)
                                     fail("Exception expected")
                                 } catch (t: Throwable) {
-                                    t shouldBe remoteLoadingException
+                                    t shouldBeSameInstanceAs cancellationException
+                                }
+                            }
+                        }
+                    }
+                }
+
+                And("remote data source throws exception") {
+                    val remoteLoadingException = IllegalStateException("Remote loading failure")
+                    val remoteDataSource = createFakeRemoteCharacterDatasource(
+                        getPageAction = { _, _ -> throw remoteLoadingException }
+                    )
+
+                    And("a repository") {
+                        val repository = DefaultCharacterRepository(
+                            defaultDispatcher = UnconfinedTestDispatcher(),
+                            localPersistentCharacterDataSource =
+                            createFakeLocalCharacterDatasource(),
+                            localTransientCharacterDataSource =
+                            createFakeLocalCharacterDatasource(),
+                            remoteCharacterDataSource = remoteDataSource,
+                        )
+
+                        When("loadPage is called") {
+
+                            Then("proper exception should be thrown") {
+                                try {
+                                    repository.loadPage(filter, page)
+                                    fail("Exception expected")
+                                } catch (t: Throwable) {
+                                    t shouldBe IllegalStateException(
+                                        EXCEPTION_MESSAGE_OPERATION_FAILED
+                                    )
                                 }
                             }
                         }
@@ -627,12 +974,14 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                                     When("loadPage is called") {
 
-                                        Then("clearing exception should be thrown") {
+                                        Then("proper exception should be thrown") {
                                             try {
                                                 repository.loadPage(filter, page)
                                                 fail("Exception expected")
                                             } catch (t: Throwable) {
-                                                t shouldBe clearException
+                                                t shouldBe IllegalStateException(
+                                                    EXCEPTION_MESSAGE_OPERATION_FAILED
+                                                )
                                             }
                                         }
                                     }
@@ -667,12 +1016,14 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
 
                                 When("loadPage is called") {
 
-                                    Then("clearing exception should be thrown") {
+                                    Then("proper exception should be thrown") {
                                         try {
                                             repository.loadPage(filter, page)
                                             fail("Exception expected")
                                         } catch (t: Throwable) {
-                                            t shouldBe clearException
+                                            t shouldBe IllegalStateException(
+                                                EXCEPTION_MESSAGE_OPERATION_FAILED
+                                            )
                                         }
                                     }
                                 }
@@ -711,7 +1062,7 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                         val transientDataSource = createFakeLocalCharacterDatasource(
                             insertAllAction = { charactersToInsert ->
                                 if (charactersToInsert.toList() == characters) {
-                                     // No-op
+                                    // No-op
                                 } else {
                                     throw NotImplementedError()
                                 }
@@ -721,7 +1072,8 @@ class DefaultCharacterRepositoryTest : BehaviorSpec({
                         And("a repository") {
                             val repository = DefaultCharacterRepository(
                                 defaultDispatcher = UnconfinedTestDispatcher(),
-                                localPersistentCharacterDataSource = createFakeLocalCharacterDatasource(),
+                                localPersistentCharacterDataSource =
+                                createFakeLocalCharacterDatasource(),
                                 localTransientCharacterDataSource = transientDataSource,
                                 remoteCharacterDataSource = remoteDataSource,
                             )
