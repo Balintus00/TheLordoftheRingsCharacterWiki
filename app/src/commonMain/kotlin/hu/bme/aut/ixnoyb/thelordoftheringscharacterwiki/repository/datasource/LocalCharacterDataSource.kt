@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.Flow
 
 internal interface LocalCharacterDataSource {
 
-    fun getAll(): Flow<List<Character>>
+    fun getAll(): Flow<DataSourceQueryResponse<List<Character>>>
 
-    fun getById(id: ID): Flow<Character?>
+    fun getById(id: ID): Flow<DataSourceQueryResponse<Character?>>
 
-    suspend fun insertAll(characters: List<Character>)
+    suspend fun insertAll(characters: List<Character>): DataSourceCommandResponse
 
-    suspend fun clear()
+    suspend fun clear(): DataSourceCommandResponse
 }

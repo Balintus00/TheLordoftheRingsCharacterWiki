@@ -22,7 +22,34 @@ kotlin {
         }
     }
 
-    jvm("desktop")
+    jvm("desktop") {
+        compilations {
+            val main by getting
+
+            val integrationTest by compilations.creating {
+                defaultSourceSet {
+                    dependencies {
+                        implementation(
+                            main.compileDependencyFiles + main.output.classesDirs
+                        )
+                        implementation(libs.kotest.runner.junit5)
+                    }
+                }
+
+                // Source: https://youtrack.jetbrains.com/issue/KTIJ-23114#focus=Comments-27-8518506.0-0
+                associateWith(main)
+
+                tasks.register<Test>("desktopIntegrationTest") {
+                    group = LifecycleBasePlugin.VERIFICATION_GROUP
+
+                    classpath = compileDependencyFiles + runtimeDependencyFiles + output.allOutputs
+                    testClassesDirs = output.classesDirs
+
+                    useJUnitPlatform()
+                }
+            }
+        }
+    }
 
     listOf(
         iosX64(),
@@ -225,7 +252,7 @@ buildkonfig {
 sqldelight {
     databases {
         create("SqlDelightDatabase") {
-            packageName.set("hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki")
+            packageName.set("hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.sqldelight")
         }
     }
 }

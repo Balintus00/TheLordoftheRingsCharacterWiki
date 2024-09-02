@@ -16,6 +16,8 @@ naming:
     constantPattern: '[A-Z][_A-Za-z0-9]*'
 
 style:
+  ForbiddenComment:
+    active: false
   MagicNumber:
     ignorePropertyDeclaration: true
   NewLineAtEndOfFile:

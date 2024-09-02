@@ -1,6 +1,6 @@
 package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.di
 
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.SqlDelightDatabase
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.sqldelight.SqlDelightDatabase
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.remote.KtorRemoteCharacterDataSource
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.disk.SqlDelightLocalCharacterDataSource
 import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.memory.InMemoryLocalCharacterDataSource

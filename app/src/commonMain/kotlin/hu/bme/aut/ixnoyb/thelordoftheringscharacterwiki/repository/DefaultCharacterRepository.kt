@@ -25,15 +25,16 @@ internal class DefaultCharacterRepository(
 
     private val log = Logger.withTag(DefaultCharacterRepository::class.simpleName!!)
 
-    override fun getAll(nameFilter: CharacterNameFilter?): Flow<List<Character>> =
-        if (nameFilter != null) {
+    // TODO
+    override fun getAll(nameFilter: CharacterNameFilter?): Flow<List<Character>> = TODO()
+/*        if (nameFilter != null) {
             localTransientCharacterDataSource
         } else {
             localPersistentCharacterDataSource
-        }.getAll().flowOn(defaultDispatcher)
+        }.getAll().flowOn(defaultDispatcher)*/
 
-    override fun getByID(id: ID): Flow<Character?> =
-        localTransientCharacterDataSource.getById(id).combine(
+    override fun getByID(id: ID): Flow<Character?> = TODO()
+/*        localTransientCharacterDataSource.getById(id).combine(
             localPersistentCharacterDataSource.getById(id)
         ) { transientCharacter, persistentCharacter ->
             when {
@@ -41,7 +42,7 @@ internal class DefaultCharacterRepository(
                 persistentCharacter != null -> persistentCharacter
                 else -> null
             }
-        }.flowOn(defaultDispatcher)
+        }.flowOn(defaultDispatcher)*/
 
     override suspend fun loadByID(id: ID): Character = withContext(defaultDispatcher) {
         try {

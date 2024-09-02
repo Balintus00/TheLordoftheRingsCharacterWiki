@@ -1,9 +1,12 @@
+// Currently source set naming convention is marked as false positive
+@file:Suppress("MatchingDeclarationName")
+
 package hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.data.disk
 
 import android.content.Context
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.SqlDelightDatabase
+import hu.bme.aut.ixnoyb.thelordoftheringscharacterwiki.sqldelight.SqlDelightDatabase
 
 internal actual class SqlDriverFactory(private val context: Context) {
 
